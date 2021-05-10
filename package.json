@@ -1,0 +1,31 @@
+{
+  "name": "cloud_photo",
+  "version": "1.0.0",
+  "description": "web application to store photo to cloud storage",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JrTai/Cloud-Photo.git"
+  },
+  "author": "Henry Tai",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/JrTai/Cloud-Photo/issues"
+  },
+  "homepage": "https://github.com/JrTai/Cloud-Photo#readme",
+  "dependencies": {
+    "dotenv": "^9.0.1",
+    "express": "^4.17.1",
+    "mysql": "^2.18.1"
+  },
+  "devDependencies": {
+    "eslint": "^7.26.0",
+    "eslint-config-standard": "^16.0.2",
+    "eslint-plugin-import": "^2.22.1",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-promise": "^4.3.1"
+  }
+}
