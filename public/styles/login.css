@@ -276,3 +276,17 @@ input[type="text"]:placeholder {
 #icon {
   width: 60%;
 }
+
+.bg-img {
+  /* The image used */
+  background-image: url("./images/cover.jpeg");
+
+  /* Full height */
+  height: 100%;
+  width: 100%;
+
+  /* Center and scale the image nicely */
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
