@@ -1,0 +1,22 @@
+.photo-date {
+  font-size: 18px;
+}
+
+.navbar-brand {
+  width: 196px;
+}
+
+#circle {
+  width: 30px;
+  height: 30px;
+  -webkit-border-radius: 25px;
+  -moz-border-radius: 25px;
+  border-radius: 25px;
+  background: rgb(150, 172, 240);
+  margin-left: 20px;
+  color: #fff;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
