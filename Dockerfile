@@ -9,7 +9,9 @@ COPY package*.json ./
 RUN apt-get install -y curl \
     && curl -sL https://deb.nodesource.com/setup_9.x | bash - \
     && apt-get install -y nodejs \
-    && curl -L https://www.npmjs.com/install.sh | sh
+    && curl -L https://www.npmjs.com/install.sh | sh \
+    && npm install
 COPY . .
 EXPOSE 3000
+CMD [ "node", "app.js" ]
 
