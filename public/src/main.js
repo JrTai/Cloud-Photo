@@ -11,7 +11,9 @@ function uploadPhoto () {
     }
 
     const input = document.querySelector("#imgupload");
-    input.parentNode.removeChild(input);
+    if (input) {
+      input.parentNode.removeChild(input);
+    }
 
     // eslint-disable-next-line no-undef
     $.ajax({
