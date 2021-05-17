@@ -1,27 +1,33 @@
+require("dotenv").config();
 const express = require("express");
-const mysql = require("mysql");
+const path = require("path");
+const { API_VERSION } = process.env;
 
 const app = express();
+
 app.use(express.static("public"));
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 // set trust proxy to get client ip
 app.set("trust proxy", true);
 
-// set .env
-require("dotenv").config();
+// API routes
+app.use("/api/" + API_VERSION, [
+  require("./server/routes/upload_route")
+  // require("./server/routes/product_route")
+]);
 
-// create connection
-function DbConnection () {
-  const pool = mysql.createPool({
-    host: process.env.host,
-    user: process.env.user,
-    password: process.env.password,
-    database: process.env.database
-  });
-  return pool;
-}
+// Page not found
+app.use(function (req, res, next) {
+  res.status(404).sendFile(path.join(__dirname, "/public/404.html"));
+});
 
-app.set("pool", new DbConnection());
+// Error handling
+app.use(function (err, req, res, next) {
+  console.log(err);
+  res.status(500).send("Internal Server Error");
+});
 
 app.listen(3000, () => {
   console.log("The application is running on localhose:3000");
