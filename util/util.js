@@ -20,8 +20,6 @@ aws.config.update({
 });
 const s3 = new aws.S3();
 
-const fileNames = [];
-
 // multer upload to AWS S3
 const storage = multerS3({
   s3: s3,
@@ -37,21 +35,15 @@ const storage = multerS3({
     const fileExtension = file.mimetype.split("/")[1]; // get file extension from original file name
     const fileName = Date.now() + "." + fileExtension;
     cb(null, fileName); // use Date.now() for unique file keys
-    fileNames.push(fileName);
   }
 });
 
 const upload = multer({
   storage: storage,
-  limits: { fileSize: 3 * 1024 * 1024 } // 3 MB max photo size
+  limits: { fileSize: 2 * 1024 * 1024 } // 2 MB max photo size
 });
 
-const uploadFile = {
-  upload: upload,
-  fileNames: fileNames
-};
-
 module.exports = {
-  uploadFile,
+  upload,
   wrapAsync
 };
