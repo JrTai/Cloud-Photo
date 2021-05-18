@@ -24,7 +24,6 @@ function uploadPhoto () {
       contentType: false,
       success: function (msg) {
         alert(msg);
-        // create order div then append
         const header = document.querySelector("header");
         const input = `<input
                         type="file"
@@ -38,6 +37,16 @@ function uploadPhoto () {
       },
       error: function (e) {
         console.log("some error:", e);
+        const header = document.querySelector("header");
+        const input = `<input
+                        type="file"
+                        id="imgupload"
+                        style="display: none"
+                        name="photos"
+                        multiple="multiple"
+                        accept="image/*"
+                       />`;
+        header.insertAdjacentHTML("beforeend", input);
       }
     });
   });

@@ -1,6 +1,6 @@
 const { pool } = require("./mysqlcon");
 
-const insertDB = async (sql) => {
+const queryDB = async (sql) => {
   const conn = await pool.getConnection();
   try {
     await conn.query("START TRANSACTION");
@@ -16,5 +16,5 @@ const insertDB = async (sql) => {
 };
 
 module.exports = {
-  insertDB
+  queryDB
 };
