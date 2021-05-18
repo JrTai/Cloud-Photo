@@ -14,8 +14,8 @@ app.set("trust proxy", true);
 
 // API routes
 app.use("/api/" + API_VERSION, [
-  require("./server/routes/upload_route")
-  // require("./server/routes/product_route")
+  require("./server/routes/upload_route"),
+  require("./server/routes/user_route")
 ]);
 
 // Page not found
