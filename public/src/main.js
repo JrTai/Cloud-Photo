@@ -1,3 +1,45 @@
+authentication();
+
+function authentication () {
+  const localStorage = window.localStorage;
+  console.log(localStorage.access_token);
+  // eslint-disable-next-line no-undef
+  $.ajax({
+    type: "POST",
+    url: "/api/1.0/user/authentication",
+    headers: {
+      Authorization: "Bearer " + localStorage.access_token
+    },
+    processData: false,
+    contentType: false,
+    success: function (data, status) {
+      console.log(data);
+      updateUserInfo(data);
+    },
+    error: function (xhr, desc, err) {
+      console.log(err);
+      window.location.href = "/index.html";
+    }
+  });
+}
+
+function updateUserInfo (data) {
+  const userCode = data.email[0].toUpperCase();
+  const userCircle = document.querySelector("#circle");
+  userCircle.innerHTML = userCode;
+  const userBar = document.querySelector("#file");
+  userBar.value = data.storage;
+  userBar.innerHTML = data.storage.toFixed(0) + "%";
+  const userStorage = document.querySelector("#storage");
+  userStorage.innerHTML = `<img 
+                             style="visibility: Hidden"
+                             src="./images/cloud.png" 
+                             alt="cloud" width="16" 
+                             height="16" 
+                             class="bi me-2"/>
+                             Used ${data.storage.toFixed(0)}% of 2GB`;
+}
+
 // eslint-disable-next-line no-unused-vars
 function uploadPhoto () {
   // eslint-disable-next-line no-undef

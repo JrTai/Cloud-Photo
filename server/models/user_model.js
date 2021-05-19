@@ -87,6 +87,23 @@ const nativeSignIn = async (email, password) => {
   }
 };
 
+const getStorage = async (email) => {
+  const conn = await pool.getConnection();
+  try {
+    const users = await conn.query("SELECT * FROM user WHERE email = ?", [
+      email
+    ]);
+    const user = users[0][0];
+    return user.storage;
+  } catch (error) {
+    // await conn.query("ROLLBACK");
+    return { error };
+  } finally {
+    // await conn.release();
+  }
+};
+
 module.exports = {
-  signInUp
+  signInUp,
+  getStorage
 };

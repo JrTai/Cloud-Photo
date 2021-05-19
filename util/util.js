@@ -2,7 +2,9 @@ require("dotenv").config();
 const multer = require("multer");
 const multerS3 = require("multer-s3");
 const aws = require("aws-sdk");
-// const path = require("path");
+const { TOKEN_SECRET } = process.env; // 30 days by seconds
+const jwt = require("jsonwebtoken");
+const User = require("../server/models/user_model");
 
 // reference: https://thecodebarbarian.com/80-20-guide-to-express-error-handling
 const wrapAsync = (fn) => {
@@ -43,7 +45,35 @@ const upload = multer({
   limits: { fileSize: 2 * 1024 * 1024 } // 2 MB max photo size
 });
 
+const authentication = () => {
+  return async function (req, res, next) {
+    let accessToken = req.get("Authorization");
+    if (!accessToken) {
+      res.status(401).send({ error: "Unauthorized" });
+      return;
+    }
+
+    accessToken = accessToken.replace("Bearer ", "");
+    if (accessToken === "null") {
+      res.status(401).send({ error: "Unauthorized" });
+      return;
+    }
+
+    try {
+      const user = jwt.verify(accessToken, TOKEN_SECRET);
+      req.user = user;
+      const storage = await User.getStorage(user.email);
+      user.storage = storage;
+      res.status(200).send(user);
+      return;
+    } catch (err) {
+      res.status(403).send({ error: "Forbidden" });
+    }
+  };
+};
+
 module.exports = {
   upload,
-  wrapAsync
+  wrapAsync,
+  authentication
 };
