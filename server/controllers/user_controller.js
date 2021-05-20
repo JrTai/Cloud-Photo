@@ -41,6 +41,11 @@ const signInUp = async (req, res) => {
   });
 };
 
+const userDetail = async (req, res) => {
+  res.status(200).send(req.user);
+};
+
 module.exports = {
-  signInUp
+  signInUp,
+  userDetail
 };

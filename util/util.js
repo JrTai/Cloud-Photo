@@ -61,10 +61,11 @@ const authentication = () => {
 
     try {
       const user = jwt.verify(accessToken, TOKEN_SECRET);
+      const { userDetail } = await User.getUserDetail(user.email);
+      user.storage = userDetail.storage;
+      user.userid = userDetail.userid;
       req.user = user;
-      const storage = await User.getStorage(user.email);
-      user.storage = storage;
-      res.status(200).send(user);
+      next();
       return;
     } catch (err) {
       res.status(403).send({ error: "Forbidden" });
