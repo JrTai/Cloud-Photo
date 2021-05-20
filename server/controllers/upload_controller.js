@@ -4,7 +4,7 @@ const Database = require("../models/photo_model");
 
 const createUserPhoto = async (req, res) => {
   let uploadSize = 0;
-  const userid = 1;
+  const userid = req.user.userid;
   let queryStr1 =
     "INSERT INTO photo (userid, url, albumid, public, trash, date, diaryid, size) VALUES ";
   for (let i = 0; i < req.files.length; i += 1) {

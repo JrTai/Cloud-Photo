@@ -2,7 +2,6 @@ authentication();
 
 function authentication () {
   const localStorage = window.localStorage;
-  console.log(localStorage.access_token);
   // eslint-disable-next-line no-undef
   $.ajax({
     type: "POST",
@@ -42,6 +41,7 @@ function updateUserInfo (data) {
 
 // eslint-disable-next-line no-unused-vars
 function uploadPhoto () {
+  const localStorage = window.localStorage;
   // eslint-disable-next-line no-undef
   $("#imgupload").trigger("click");
   const uploadFiles = document.querySelector("#imgupload");
@@ -61,6 +61,9 @@ function uploadPhoto () {
     $.ajax({
       type: "POST",
       url: "/api/1.0/upload/photo",
+      headers: {
+        Authorization: "Bearer " + localStorage.access_token
+      },
       data: form,
       processData: false,
       contentType: false,
