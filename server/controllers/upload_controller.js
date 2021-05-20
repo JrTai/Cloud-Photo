@@ -6,13 +6,13 @@ const createUserPhoto = async (req, res) => {
   let uploadSize = 0;
   const userid = req.user.userid;
   let queryStr1 =
-    "INSERT INTO photo (userid, url, albumid, public, trash, date, diaryid, size) VALUES ";
+    "INSERT INTO photo (userid, url, albumid, public, trash, date, diaryid, size, deleted) VALUES ";
   for (let i = 0; i < req.files.length; i += 1) {
     // orders insert
     const unixTime = parseInt(req.files[i].key.split(".")[0]);
     const date = moment(unixTime).format("YYYY-MM-DDTHH:mm:ss.SSS");
     const size = req.files[i].size;
-    queryStr1 += `(${userid}, "${req.files[i].location}", null, false, false, "${date}", null, ${size}),`; // userid need to be flex
+    queryStr1 += `(${userid}, "${req.files[i].location}", null, false, false, "${date}", null, ${size}, false),`; // userid need to be flex
     uploadSize += size;
   }
   queryStr1 = queryStr1.replace(/.$/, ";");
