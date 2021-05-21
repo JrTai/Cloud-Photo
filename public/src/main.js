@@ -13,29 +13,33 @@ function photos () {
     processData: false,
     contentType: false,
     success: function (photos, status) {
-      let photoDate = photos[0].upload_date;
-      const date = `<br /><br /><br /><br />
+      try {
+        let photoDate = photos[0].upload_date;
+        const date = `<br /><br /><br /><br />
                     <br />
                     <p class="photo-date">${photoDate}</p>
                     <br />`;
-      const photoZone = document.querySelector(".col-lg-10");
-      photoZone.insertAdjacentHTML("beforeend", date);
-      for (const photo of photos) {
-        const eachPhotoDate = photo.upload_date;
-        if (eachPhotoDate !== photoDate) {
-          photoDate = eachPhotoDate;
-          const photoZone = document.querySelector(".col-lg-10");
-          const date = `<br />
+        const photoZone = document.querySelector(".col-lg-10");
+        photoZone.insertAdjacentHTML("beforeend", date);
+        for (const photo of photos) {
+          const eachPhotoDate = photo.upload_date;
+          if (eachPhotoDate !== photoDate) {
+            photoDate = eachPhotoDate;
+            const photoZone = document.querySelector(".col-lg-10");
+            const date = `<br />
                         <br />
                         <p class="photo-date">${photoDate}</p>
                         <br />`;
-          photoZone.insertAdjacentHTML("beforeend", date);
-        }
-        const img = `<img
+            photoZone.insertAdjacentHTML("beforeend", date);
+          }
+          const img = `<img
                         src="${photo.url}"
                         class="d-inline-block align-text-top photo"
                      />`;
-        photoZone.insertAdjacentHTML("beforeend", img);
+          photoZone.insertAdjacentHTML("beforeend", img);
+        }
+      } catch (error) {
+        console.error(`Show user photos error: ${error}`);
       }
     },
     error: function (xhr, desc, err) {
