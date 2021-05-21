@@ -1,6 +1,6 @@
 const { pool } = require("./mysqlcon");
 
-const queryDB = async (sql) => {
+const insertPhotos = async (sql) => {
   const conn = await pool.getConnection();
   try {
     await conn.query("START TRANSACTION");
@@ -15,6 +15,22 @@ const queryDB = async (sql) => {
   }
 };
 
+const getPhotos = async (sql) => {
+  const conn = await pool.getConnection();
+  try {
+    await conn.query("START TRANSACTION");
+    const photos = await conn.query(sql);
+    await conn.query("COMMIT");
+    return photos[0];
+  } catch (error) {
+    await conn.query("ROLLBACK");
+    return error;
+  } finally {
+    await conn.release();
+  }
+};
+
 module.exports = {
-  queryDB
+  insertPhotos,
+  getPhotos
 };

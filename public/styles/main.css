@@ -21,6 +21,12 @@
   align-items: center;
 }
 
+.photo {
+  width: auto;
+  height: 200px;
+  margin: 2px 2px 2px 2px;
+}
+
 @media only screen and (max-width: 1240px) {
   .sidebar {
     visibility: Hidden;

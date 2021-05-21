@@ -1,4 +1,48 @@
 authentication();
+photos();
+
+function photos () {
+  const localStorage = window.localStorage;
+  // eslint-disable-next-line no-undef
+  $.ajax({
+    type: "POST",
+    url: "/api/1.0/user/photos",
+    headers: {
+      Authorization: "Bearer " + localStorage.access_token
+    },
+    processData: false,
+    contentType: false,
+    success: function (photos, status) {
+      let photoDate = photos[0].upload_date;
+      const date = `<br /><br /><br /><br />
+                    <br />
+                    <p class="photo-date">${photoDate}</p>
+                    <br />`;
+      const photoZone = document.querySelector(".col-lg-10");
+      photoZone.insertAdjacentHTML("beforeend", date);
+      for (const photo of photos) {
+        const eachPhotoDate = photo.upload_date;
+        if (eachPhotoDate !== photoDate) {
+          photoDate = eachPhotoDate;
+          const photoZone = document.querySelector(".col-lg-10");
+          const date = `<br />
+                        <br />
+                        <p class="photo-date">${photoDate}</p>
+                        <br />`;
+          photoZone.insertAdjacentHTML("beforeend", date);
+        }
+        const img = `<img
+                        src="${photo.url}"
+                        class="d-inline-block align-text-top photo"
+                     />`;
+        photoZone.insertAdjacentHTML("beforeend", img);
+      }
+    },
+    error: function (xhr, desc, err) {
+      console.log(err);
+    }
+  });
+}
 
 function authentication () {
   const localStorage = window.localStorage;
@@ -11,7 +55,7 @@ function authentication () {
     },
     processData: false,
     contentType: false,
-    success: function (data, status) {
+    success: function (data) {
       // console.log(data);
       updateUserInfo(data);
     },
