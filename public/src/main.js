@@ -1,6 +1,29 @@
 authentication();
 photos();
 
+document.addEventListener("click", function (event) {
+  const targetElement = event.target;
+  console.log(targetElement);
+  console.log(targetElement.tagName);
+  console.log(targetElement.classList);
+  if (targetElement.tagName === "A") {
+    console.log("click A");
+    if (
+      targetElement.classList.contains("nav-link") &&
+      !targetElement.classList.contains("storage") &&
+      !targetElement.hasAttribute("aria-current")
+    ) {
+      targetElement.setAttribute("class", "nav-link active");
+      const prevSelectSideBar = document.querySelector("[aria-current=\"page\"]");
+      prevSelectSideBar.setAttribute("class", "nav-link link-dark");
+      prevSelectSideBar.removeAttribute("aria-current");
+      targetElement.setAttribute("aria-current", "page");
+    }
+  } else if (targetElement.tagName === "IMG") {
+    console.log("click IMG");
+  }
+});
+
 function photos () {
   const localStorage = window.localStorage;
   // eslint-disable-next-line no-undef
