@@ -1,13 +1,45 @@
+// eslint-disable-next-line no-undef
+photoNumberPerLoad = 20;
+// eslint-disable-next-line no-undef
+notReachEnd = true;
+// eslint-disable-next-line no-undef
+loadPageIndex = 0;
 authentication();
 photos();
 
+// scroll to bottom to call photos
+// will need to call shared albums, my albums, photo diary, photo exhibition, trash
+// eslint-disable-next-line no-undef
+$(document).ready(function () {
+  // eslint-disable-next-line no-undef
+  $(window).scroll(function () {
+    // eslint-disable-next-line no-undef
+    const position = $(window).scrollTop();
+    // eslint-disable-next-line no-undef
+    const bottom = $(document).height() - $(window).height();
+    // big problem: position wouldn't really reach the bottom, will has tiny difference, from 13 to 4
+    // since there's a ragne, will trigger multiple times functions
+    // eslint-disable-next-line no-undef
+    if (bottom - position < 20 && notReachEnd) {
+      // console.log("reach bottom");
+      const sideBarSection = document.querySelector(".active");
+      if (sideBarSection.innerHTML.split(">")[1].trim() === "Photos") {
+        photos();
+        // eslint-disable-next-line no-undef
+        notReachEnd = false;
+      }
+    }
+    if (bottom - position > 200) {
+      // eslint-disable-next-line no-undef
+      notReachEnd = true;
+    }
+  });
+});
+
 document.addEventListener("click", function (event) {
   const targetElement = event.target;
-  console.log(targetElement);
-  console.log(targetElement.tagName);
-  console.log(targetElement.classList);
   if (targetElement.tagName === "A") {
-    console.log("click A");
+    // console.log("click A");
     if (
       targetElement.classList.contains("nav-link") &&
       !targetElement.classList.contains("storage") &&
@@ -19,13 +51,40 @@ document.addEventListener("click", function (event) {
       prevSelectSideBar.removeAttribute("aria-current");
       targetElement.setAttribute("aria-current", "page");
     }
+
+    // different sideBarSection will need to clean screen, then call each section function
+    if (targetElement.innerHTML.split(">")[1].trim() === "Photos") {
+      cleanScreen();
+      photos();
+    } else if (
+      targetElement.innerHTML.split(">")[1].trim() === "Shared Album"
+    ) {
+      cleanScreen();
+    } else if (targetElement.innerHTML.split(">")[1].trim() === "My Album") {
+      cleanScreen();
+    } else if (targetElement.innerHTML.split(">")[1].trim() === "Photo Diary") {
+      cleanScreen();
+    } else if (targetElement.innerHTML.split(">")[1].trim() === "Exhibition") {
+      cleanScreen();
+    } else if (targetElement.innerHTML.split(">")[1].trim() === "Trash") {
+      cleanScreen();
+    }
   } else if (targetElement.tagName === "IMG") {
-    console.log("click IMG");
+    // console.log("click IMG");
   }
 });
 
+function cleanScreen () {
+  const photoZone = document.querySelector(".col-lg-10");
+  photoZone.innerHTML = "";
+  // eslint-disable-next-line no-undef
+  loadPageIndex = 0;
+}
+
 function photos () {
   const localStorage = window.localStorage;
+  // eslint-disable-next-line no-undef
+  const data = { loadPageIndex: loadPageIndex };
   // eslint-disable-next-line no-undef
   $.ajax({
     type: "POST",
@@ -33,36 +92,48 @@ function photos () {
     headers: {
       Authorization: "Bearer " + localStorage.access_token
     },
+    data: JSON.stringify(data),
     processData: false,
-    contentType: false,
+    contentType: "application/json",
     success: function (photos, status) {
-      try {
-        let photoDate = photos[0].upload_date;
-        const date = `<br /><br /><br /><br />
-                    <br />
-                    <p class="photo-date">${photoDate}</p>
-                    <br />`;
-        const photoZone = document.querySelector(".col-lg-10");
-        photoZone.insertAdjacentHTML("beforeend", date);
-        for (const photo of photos) {
-          const eachPhotoDate = photo.upload_date;
-          if (eachPhotoDate !== photoDate) {
-            photoDate = eachPhotoDate;
-            const photoZone = document.querySelector(".col-lg-10");
-            const date = `<br />
-                        <br />
-                        <p class="photo-date">${photoDate}</p>
-                        <br />`;
+      if (photos.length) {
+        try {
+          const photoZone = document.querySelector(".col-lg-10");
+          let photoDate;
+          if (photoZone.innerHTML === "") {
+            photoDate = photos[0].upload_date;
+            const date = `<br /><br /><br /><br />
+                      <br />
+                      <p class="photo-date">${photoDate}</p>
+                      <br />`;
+
             photoZone.insertAdjacentHTML("beforeend", date);
+          } else {
+            const dateZones = document.querySelectorAll(".photo-date");
+            photoDate = dateZones[dateZones.length - 1].innerHTML;
           }
-          const img = `<img
-                        src="${photo.url}"
-                        class="d-inline-block align-text-top photo"
-                     />`;
-          photoZone.insertAdjacentHTML("beforeend", img);
+          for (const photo of photos) {
+            const eachPhotoDate = photo.upload_date;
+            if (eachPhotoDate !== photoDate) {
+              photoDate = eachPhotoDate;
+              const photoZone = document.querySelector(".col-lg-10");
+              const date = `<br />
+                          <br />
+                          <p class="photo-date">${photoDate}</p>
+                          <br />`;
+              photoZone.insertAdjacentHTML("beforeend", date);
+            }
+            const img = `<img
+                          src="${photo.url}"
+                          class="d-inline-block align-text-top photo"
+                       />`;
+            photoZone.insertAdjacentHTML("beforeend", img);
+          }
+          // eslint-disable-next-line no-undef
+          loadPageIndex += photoNumberPerLoad;
+        } catch (error) {
+          console.error(`Show user photos error: ${error}`);
         }
-      } catch (error) {
-        console.error(`Show user photos error: ${error}`);
       }
     },
     error: function (xhr, desc, err) {
