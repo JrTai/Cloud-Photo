@@ -24,7 +24,7 @@ const createUserPhoto = async (req, res) => {
   const percentage = (uploadSize / 2000000000) * 100; // 2GB up limit per user
   const updateUserStorage = `UPDATE user SET storage = storage + ${percentage} WHERE user_id = ${userid};`;
   await Photo.insertPhotos(updateUserStorage);
-  res.status(200).send("photos uploading complete!");
+  res.status(200).send("Photos Uploading Completed!");
 };
 
 module.exports = {

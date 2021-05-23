@@ -37,6 +37,7 @@ $(document).ready(function () {
 });
 
 document.addEventListener("click", function (event) {
+  const plusElement = document.querySelector("#plus");
   const targetElement = event.target;
   if (targetElement.tagName === "A") {
     // console.log("click A");
@@ -55,24 +56,56 @@ document.addEventListener("click", function (event) {
     // different sideBarSection will need to clean screen, then call each section function
     if (targetElement.innerHTML.split(">")[1].trim() === "Photos") {
       cleanScreen();
+      plusElement.setAttribute("style", "cursor: pointer; visibility: Hidden");
       photos();
     } else if (
       targetElement.innerHTML.split(">")[1].trim() === "Shared Album"
     ) {
       cleanScreen();
+      plusElement.setAttribute("style", "cursor: pointer; visibility: Hidden");
     } else if (targetElement.innerHTML.split(">")[1].trim() === "My Album") {
       cleanScreen();
+      plusElement.setAttribute("style", "cursor: pointer; visibility: Hidden");
     } else if (targetElement.innerHTML.split(">")[1].trim() === "Photo Diary") {
       cleanScreen();
+      plusElement.setAttribute("style", "cursor: pointer; visibility: Hidden");
     } else if (targetElement.innerHTML.split(">")[1].trim() === "Exhibition") {
       cleanScreen();
+      plusElement.setAttribute("style", "cursor: pointer; visibility: Hidden");
     } else if (targetElement.innerHTML.split(">")[1].trim() === "Trash") {
       cleanScreen();
+      plusElement.setAttribute("style", "cursor: pointer; visibility: Hidden");
     }
-  } else if (targetElement.tagName === "IMG") {
+  } else if (
+    targetElement.tagName === "IMG" &&
+    targetElement.classList.contains("photo")
+  ) {
     // console.log("click IMG");
+    if (targetElement.classList.contains("selected")) {
+      targetElement.setAttribute(
+        "class",
+        "d-inline-block align-text-top photo"
+      );
+    } else {
+      targetElement.setAttribute(
+        "class",
+        "d-inline-block align-text-top photo selected"
+      );
+    }
+
+    const selectedElements = document.querySelectorAll(".selected");
+    if (selectedElements.length) {
+      plusElement.setAttribute("style", "cursor: pointer;");
+    } else {
+      plusElement.setAttribute("style", "cursor: pointer; visibility: Hidden");
+    }
   }
 });
+
+// eslint-disable-next-line no-unused-vars
+function addAlbum () {
+  console.log("add album function add here");
+}
 
 function cleanScreen () {
   const photoZone = document.querySelector(".col-lg-10");
@@ -210,7 +243,8 @@ function uploadPhoto () {
       processData: false,
       contentType: false,
       success: function (msg) {
-        alert(msg);
+        // eslint-disable-next-line no-undef
+        swal(msg, "Please click the button!", "success");
         const header = document.querySelector("header");
         const input = `<input
                         type="file"
@@ -221,6 +255,8 @@ function uploadPhoto () {
                         accept="image/*"
                        />`;
         header.insertAdjacentHTML("beforeend", input);
+        cleanScreen();
+        photos();
       },
       error: function (e) {
         console.log("some error:", e);
