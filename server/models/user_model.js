@@ -33,8 +33,8 @@ const signInUp = async (email, password) => {
     );
     user.access_token = accessToken;
 
-    const queryStr = "INSERT INTO user SET ?";
-    const result = await conn.query(queryStr, user);
+    const insertNewUser = "INSERT INTO user SET ?";
+    const result = await conn.query(insertNewUser, user);
 
     user.id = result[0].insertId;
     // await conn.query("COMMIT");
@@ -70,8 +70,8 @@ const nativeSignIn = async (email, password) => {
     );
 
     // problem, will block process, currently skip update step
-    // const queryStr = `UPDATE user SET access_token = "${accessToken}", access_expired = ${TOKEN_EXPIRE} WHERE userid = ${user.userid};`;
-    // await conn.query(queryStr);
+    // const updateUserToken = `UPDATE user SET access_token = "${accessToken}", access_expired = ${TOKEN_EXPIRE} WHERE userid = ${user.userid};`;
+    // await conn.query(updateUserToken);
 
     // await conn.query("COMMIT");
 
