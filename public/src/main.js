@@ -99,6 +99,19 @@ document.addEventListener("click", function (event) {
     } else {
       plusElement.setAttribute("style", "cursor: pointer; visibility: Hidden");
     }
+  } else if (targetElement.id === "circle") {
+    // eslint-disable-next-line no-undef
+    swal({
+      title: "Do you really want to log out?",
+      icon: "warning",
+      buttons: true,
+      dangerMode: false
+    }).then((value) => {
+      if (value) {
+        localStorage.clear();
+        window.location.href = "/index.html";
+      }
+    });
   }
 });
 
