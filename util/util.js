@@ -63,7 +63,7 @@ const authentication = () => {
       const user = jwt.verify(accessToken, TOKEN_SECRET);
       const { userDetail } = await User.getUserDetail(user.email);
       user.storage = userDetail.storage;
-      user.userid = userDetail.userid;
+      user.user_id = userDetail.user_id;
       req.user = user;
       next();
       return;

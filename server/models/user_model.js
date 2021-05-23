@@ -95,7 +95,7 @@ const getUserDetail = async (email) => {
     ]);
     const user = users[0][0];
     const userDetail = {
-      userid: user.userid,
+      user_id: user.user_id,
       email: user.email,
       storage: user.storage
     };
