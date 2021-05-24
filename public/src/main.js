@@ -117,7 +117,61 @@ document.addEventListener("click", function (event) {
 
 // eslint-disable-next-line no-unused-vars
 function addAlbum () {
-  console.log("add album function add here");
+  // eslint-disable-next-line no-undef
+  swal({
+    title: "Where Do You Want To Add Photos? ",
+    icon: "warning",
+    buttons: {
+      A: {
+        text: "Shared Album",
+        value: "Shared Album"
+      },
+      B: {
+        text: "My Album",
+        value: "My Album"
+      },
+      C: {
+        text: "Existing Album",
+        value: "Existing Album"
+      }
+    },
+    dangerMode: false
+  }).then((value) => {
+    if (value === "Shared Album") {
+      // eslint-disable-next-line no-undef
+      swal("Give Shared Album a Name", {
+        content: "input"
+      }).then((value) => {
+        if (value !== "" && value !== null) {
+          // eslint-disable-next-line no-undef
+          swal(`Crerating "${value}" Shared Album...`);
+          // then call ajax to things
+        }
+      });
+    } else if (value === "My Album") {
+      // eslint-disable-next-line no-undef
+      swal("Give My Album a Name", {
+        content: "input"
+      }).then((value) => {
+        if (value !== "" && value !== null) {
+          // eslint-disable-next-line no-undef
+          swal(`Crerating "${value}" My Album...`);
+          // then call ajax to things
+        }
+      });
+    } else if (value === "Existing Album") {
+      // eslint-disable-next-line no-undef
+      swal("Give A Existing Album Name", {
+        content: "input"
+      }).then((value) => {
+        if (value !== "" && value !== null) {
+          // eslint-disable-next-line no-undef
+          swal(`Adding Photos to "${value}" Album...`);
+          // then call ajax to things
+        }
+      });
+    }
+  });
 }
 
 function cleanScreen () {
@@ -244,7 +298,8 @@ function uploadPhoto () {
     if (input) {
       input.parentNode.removeChild(input);
     }
-
+    // eslint-disable-next-line no-undef
+    swal("Uploading Photos to Your Cloud Stroage...");
     // eslint-disable-next-line no-undef
     $.ajax({
       type: "POST",
