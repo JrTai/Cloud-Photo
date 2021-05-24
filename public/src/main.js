@@ -145,7 +145,7 @@ function addAlbum () {
         if (value !== "" && value !== null) {
           // eslint-disable-next-line no-undef
           swal(`Crerating "${value}" Shared Album...`);
-          // then call ajax to things
+          createAlbum(`${value}`, true);
         }
       });
     } else if (value === "My Album") {
@@ -156,7 +156,7 @@ function addAlbum () {
         if (value !== "" && value !== null) {
           // eslint-disable-next-line no-undef
           swal(`Crerating "${value}" My Album...`);
-          // then call ajax to things
+          createAlbum(`${value}`, false);
         }
       });
     } else if (value === "Existing Album") {
@@ -172,6 +172,43 @@ function addAlbum () {
       });
     }
   });
+}
+
+function createAlbum (albumName, shared) {
+  const localStorage = window.localStorage;
+  const selectedPhotos = document.querySelectorAll(".selected");
+  const photos = [];
+  for (const photo of selectedPhotos) {
+    photos.push(photo.src);
+  }
+
+  const data = { albumName: albumName, shared: shared, photos: photos };
+  // eslint-disable-next-line no-undef
+  $.ajax({
+    type: "POST",
+    url: "/api/1.0/user/new/album",
+    headers: {
+      Authorization: "Bearer " + localStorage.access_token
+    },
+    data: JSON.stringify(data),
+    processData: false,
+    contentType: "application/json",
+    success: function (msg) {
+      // eslint-disable-next-line no-undef
+      swal(msg, "Please click the button!", "success");
+      deselectAllPhoto();
+    },
+    error: function (xhr, desc, err) {
+      console.log(err);
+    }
+  });
+}
+
+function deselectAllPhoto () {
+  const selectedPhotos = document.querySelectorAll(".selected");
+  for (const photo of selectedPhotos) {
+    photo.setAttribute("class", "d-inline-block align-text-top photo");
+  }
 }
 
 function cleanScreen () {
