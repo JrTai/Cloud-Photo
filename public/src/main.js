@@ -3,7 +3,7 @@ photoNumberPerLoad = 20;
 // eslint-disable-next-line no-undef
 notReachEnd = true;
 // eslint-disable-next-line no-undef
-loadPageIndex = 0;
+loadIndex = 0;
 authentication();
 photos();
 
@@ -55,26 +55,22 @@ document.addEventListener("click", function (event) {
 
     // different sideBarSection will need to clean screen, then call each section function
     if (targetElement.innerHTML.split(">")[1].trim() === "Photos") {
-      cleanScreen();
-      plusElement.setAttribute("style", "cursor: pointer; visibility: Hidden");
+      cleanScreen(plusElement);
       photos();
     } else if (
       targetElement.innerHTML.split(">")[1].trim() === "Shared Album"
     ) {
-      cleanScreen();
-      plusElement.setAttribute("style", "cursor: pointer; visibility: Hidden");
+      cleanScreen(plusElement);
+      albums(true);
     } else if (targetElement.innerHTML.split(">")[1].trim() === "My Album") {
-      cleanScreen();
-      plusElement.setAttribute("style", "cursor: pointer; visibility: Hidden");
+      cleanScreen(plusElement);
+      albums(false);
     } else if (targetElement.innerHTML.split(">")[1].trim() === "Photo Diary") {
-      cleanScreen();
-      plusElement.setAttribute("style", "cursor: pointer; visibility: Hidden");
+      cleanScreen(plusElement);
     } else if (targetElement.innerHTML.split(">")[1].trim() === "Exhibition") {
-      cleanScreen();
-      plusElement.setAttribute("style", "cursor: pointer; visibility: Hidden");
+      cleanScreen(plusElement);
     } else if (targetElement.innerHTML.split(">")[1].trim() === "Trash") {
-      cleanScreen();
-      plusElement.setAttribute("style", "cursor: pointer; visibility: Hidden");
+      cleanScreen(plusElement);
     }
   } else if (
     targetElement.tagName === "IMG" &&
@@ -114,6 +110,66 @@ document.addEventListener("click", function (event) {
     });
   }
 });
+
+function albums (shared) {
+  const localStorage = window.localStorage;
+  // eslint-disable-next-line no-undef
+  const data = { loadIndex: loadIndex, shared: shared };
+  // eslint-disable-next-line no-undef
+  $.ajax({
+    type: "POST",
+    url: "/api/1.0/user/albums",
+    headers: {
+      Authorization: "Bearer " + localStorage.access_token
+    },
+    data: JSON.stringify(data),
+    processData: false,
+    contentType: "application/json",
+    success: function (albums, status) {
+      if (albums.length) {
+        try {
+          const albumZone = document.querySelector(".col-lg-10");
+          let albumName;
+          if (albumZone.innerHTML === "") {
+            albumName = albums[0].name;
+            const name = `<br /><br /><br /><br />
+                      <br />
+                      <p class="album-name">${albumName}</p>
+                      <br />`;
+            albumZone.insertAdjacentHTML("beforeend", name);
+          } else {
+            const albumNameZones = document.querySelectorAll(".album-name");
+            albumName = albumNameZones[albumNameZones.length - 1].innerHTML;
+          }
+          for (const album of albums) {
+            const eachAlbumName = album.name;
+            if (eachAlbumName !== albumName) {
+              albumName = eachAlbumName;
+              const albumZone = document.querySelector(".col-lg-10");
+              const name = `<br />
+                          <br />
+                          <p class="photo-date">${albumName}</p>
+                          <br />`;
+              albumZone.insertAdjacentHTML("beforeend", name);
+            }
+            const img = `<img
+                          src="${album.url}"
+                          class="d-inline-block align-text-top photo"
+                       />`;
+            albumZone.insertAdjacentHTML("beforeend", img);
+          }
+          // eslint-disable-next-line no-undef
+          loadIndex += photoNumberPerLoad;
+        } catch (error) {
+          console.error(`Show user photos error: ${error}`);
+        }
+      }
+    },
+    error: function (xhr, desc, err) {
+      console.log(err);
+    }
+  });
+}
 
 // eslint-disable-next-line no-unused-vars
 function addAlbum () {
@@ -211,17 +267,18 @@ function deselectAllPhoto () {
   }
 }
 
-function cleanScreen () {
+function cleanScreen (plusElement) {
   const photoZone = document.querySelector(".col-lg-10");
   photoZone.innerHTML = "";
+  plusElement.setAttribute("style", "cursor: pointer; visibility: Hidden");
   // eslint-disable-next-line no-undef
-  loadPageIndex = 0;
+  loadIndex = 0;
 }
 
 function photos () {
   const localStorage = window.localStorage;
   // eslint-disable-next-line no-undef
-  const data = { loadPageIndex: loadPageIndex };
+  const data = { loadIndex: loadIndex };
   // eslint-disable-next-line no-undef
   $.ajax({
     type: "POST",
@@ -267,7 +324,7 @@ function photos () {
             photoZone.insertAdjacentHTML("beforeend", img);
           }
           // eslint-disable-next-line no-undef
-          loadPageIndex += photoNumberPerLoad;
+          loadIndex += photoNumberPerLoad;
         } catch (error) {
           console.error(`Show user photos error: ${error}`);
         }
@@ -351,6 +408,7 @@ function uploadPhoto () {
         // eslint-disable-next-line no-undef
         swal(msg, "Please click the button!", "success");
         const header = document.querySelector("header");
+        const plusElement = document.querySelector("#plus");
         const input = `<input
                         type="file"
                         id="imgupload"
@@ -360,7 +418,7 @@ function uploadPhoto () {
                         accept="image/*"
                        />`;
         header.insertAdjacentHTML("beforeend", input);
-        cleanScreen();
+        cleanScreen(plusElement);
         photos();
       },
       error: function (e) {

@@ -8,7 +8,7 @@ const jwt = require("jsonwebtoken");
 const signInUp = async (email, password) => {
   const conn = await pool.getConnection();
   try {
-    // await conn.query("START TRANSACTION");
+    await conn.query("START TRANSACTION");
 
     const emails = await conn.query(
       "SELECT email FROM user WHERE email = ? FOR UPDATE",
@@ -37,28 +37,28 @@ const signInUp = async (email, password) => {
     const result = await conn.query(insertNewUser, user);
 
     user.id = result[0].insertId;
-    // await conn.query("COMMIT");
+    await conn.query("COMMIT");
     return { user };
   } catch (error) {
     console.log(error);
-    // await conn.query("ROLLBACK");
+    await conn.query("ROLLBACK");
     return { error };
   } finally {
-    // await conn.release();
+    await conn.release();
   }
 };
 
 const nativeSignIn = async (email, password) => {
   const conn = await pool.getConnection();
   try {
-    // await conn.query("START TRANSACTION");
+    await conn.query("START TRANSACTION");
 
     const users = await conn.query("SELECT * FROM user WHERE email = ?", [
       email
     ]);
     const user = users[0][0];
     if (!bcrypt.compareSync(password, user.password)) {
-      //   await conn.query("COMMIT");
+      await conn.query("COMMIT");
       return { error: "Password is wrong" };
     }
 
@@ -73,17 +73,17 @@ const nativeSignIn = async (email, password) => {
     // const updateUserToken = `UPDATE user SET access_token = "${accessToken}", access_expired = ${TOKEN_EXPIRE} WHERE userid = ${user.userid};`;
     // await conn.query(updateUserToken);
 
-    // await conn.query("COMMIT");
+    await conn.query("COMMIT");
 
     user.access_token = accessToken;
     user.access_expired = TOKEN_EXPIRE;
 
     return { user };
   } catch (error) {
-    // await conn.query("ROLLBACK");
+    await conn.query("ROLLBACK");
     return { error };
   } finally {
-    // await conn.release();
+    await conn.release();
   }
 };
 
@@ -101,10 +101,10 @@ const getUserDetail = async (email) => {
     };
     return { userDetail };
   } catch (error) {
-    // await conn.query("ROLLBACK");
+    await conn.query("ROLLBACK");
     return { error };
   } finally {
-    // await conn.release();
+    await conn.release();
   }
 };
 

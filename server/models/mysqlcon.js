@@ -22,7 +22,7 @@ const mysqlConfig = {
 
 const mysqlEnv = mysqlConfig[env];
 mysqlEnv.waitForConnections = true;
-mysqlEnv.connectionLimit = 20;
+mysqlEnv.connectionLimit = 65;
 
 const pool = mysql.createPool(mysqlEnv);
 

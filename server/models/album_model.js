@@ -38,7 +38,23 @@ const updatePhotosToAlbum = async (photos, albumId) => {
   }
 };
 
+const getAlbumPhotos = async (sql) => {
+  const conn = await pool.getConnection();
+  try {
+    await conn.query("START TRANSACTION");
+    const result = await conn.query(sql);
+    await conn.query("COMMIT");
+    return result;
+  } catch (error) {
+    await conn.query("ROLLBACK");
+    return error;
+  } finally {
+    await conn.release();
+  }
+};
+
 module.exports = {
   insertNewAlbum,
-  updatePhotosToAlbum
+  updatePhotosToAlbum,
+  getAlbumPhotos
 };
