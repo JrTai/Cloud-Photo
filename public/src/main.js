@@ -38,6 +38,8 @@ $(document).ready(function () {
 
 document.addEventListener("click", function (event) {
   const plusElement = document.querySelector("#plus");
+  const minusElement = document.querySelector("#minus");
+  const sideBarSection = document.querySelector(".active");
   const targetElement = event.target;
   if (targetElement.tagName === "A") {
     // console.log("click A");
@@ -55,22 +57,22 @@ document.addEventListener("click", function (event) {
 
     // different sideBarSection will need to clean screen, then call each section function
     if (targetElement.innerHTML.split(">")[1].trim() === "Photos") {
-      cleanScreen(plusElement);
+      cleanScreen(plusElement, minusElement);
       photos();
     } else if (
       targetElement.innerHTML.split(">")[1].trim() === "Shared Album"
     ) {
-      cleanScreen(plusElement);
+      cleanScreen(plusElement, minusElement);
       albums(true);
     } else if (targetElement.innerHTML.split(">")[1].trim() === "My Album") {
-      cleanScreen(plusElement);
+      cleanScreen(plusElement, minusElement);
       albums(false);
     } else if (targetElement.innerHTML.split(">")[1].trim() === "Photo Diary") {
-      cleanScreen(plusElement);
+      cleanScreen(plusElement, minusElement);
     } else if (targetElement.innerHTML.split(">")[1].trim() === "Exhibition") {
-      cleanScreen(plusElement);
+      cleanScreen(plusElement, minusElement);
     } else if (targetElement.innerHTML.split(">")[1].trim() === "Trash") {
-      cleanScreen(plusElement);
+      cleanScreen(plusElement, minusElement);
     }
   } else if (
     targetElement.tagName === "IMG" &&
@@ -90,9 +92,22 @@ document.addEventListener("click", function (event) {
     }
 
     const selectedElements = document.querySelectorAll(".selected");
+    const section = sideBarSection.innerHTML.split(">")[1].trim();
     if (selectedElements.length) {
-      plusElement.setAttribute("style", "cursor: pointer;");
+      // minus button show
+      if (
+        section === "Photos" ||
+        section === "Shared Album" ||
+        section === "My Album"
+      ) {
+        minusElement.setAttribute("style", "cursor: pointer;");
+      }
+      // plus button show
+      if (section === "Photos") {
+        plusElement.setAttribute("style", "cursor: pointer;");
+      }
     } else {
+      minusElement.setAttribute("style", "cursor: pointer; visibility: Hidden");
       plusElement.setAttribute("style", "cursor: pointer; visibility: Hidden");
     }
   } else if (targetElement.id === "circle") {
@@ -169,6 +184,47 @@ function albums (shared) {
       console.log(err);
     }
   });
+}
+
+// eslint-disable-next-line no-unused-vars
+function deleteToTrash () {
+  const sideBarSection = document.querySelector(".active");
+  const section = sideBarSection.innerHTML.split(">")[1].trim();
+  if (section === "Photos") {
+    // eslint-disable-next-line no-undef
+    swal({
+      title: "Do You Want To Delete Photos? ",
+      icon: "warning",
+      buttons: {
+        A: {
+          text: "Delete Photo To Trash",
+          value: "Delete Photo To Trash"
+        }
+      },
+      dangerMode: false
+    }).then((value) => {
+      console.log(value);
+    });
+  } else {
+    // eslint-disable-next-line no-undef
+    swal({
+      title: "Do You Want To Delete Photos? ",
+      icon: "warning",
+      buttons: {
+        A: {
+          text: "Delete Photo To Trash",
+          value: "Delete Photo To Trash"
+        },
+        B: {
+          text: "Remove Photo From Album",
+          value: "Remove Photo From Album"
+        }
+      },
+      dangerMode: false
+    }).then((value) => {
+      console.log(value);
+    });
+  }
 }
 
 // eslint-disable-next-line no-unused-vars
@@ -267,10 +323,11 @@ function deselectAllPhoto () {
   }
 }
 
-function cleanScreen (plusElement) {
+function cleanScreen (plusElement, minusElement) {
   const photoZone = document.querySelector(".col-lg-10");
   photoZone.innerHTML = "";
   plusElement.setAttribute("style", "cursor: pointer; visibility: Hidden");
+  minusElement.setAttribute("style", "cursor: pointer; visibility: Hidden");
   // eslint-disable-next-line no-undef
   loadIndex = 0;
 }
