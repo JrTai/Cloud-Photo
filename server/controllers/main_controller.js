@@ -11,7 +11,7 @@ const userPhotos = async (req, res) => {
 const userAlbums = async (req, res) => {
   const index = req.body.loadIndex;
   const shared = req.body.shared;
-  const getUserAlbumsDetails = `SELECT * FROM photo JOIN album ON photo.album_id = album.album_id WHERE photo.user_id IN (${req.user.user_id}) AND album.shared = ${shared} ORDER BY album.album_id LIMIT ${index}, 20;`;
+  const getUserAlbumsDetails = `SELECT * FROM photo JOIN album ON photo.album_id = album.album_id WHERE photo.user_id IN (${req.user.user_id}) AND album.shared = ${shared} ORDER BY album.album_id DESC LIMIT ${index}, 20;`;
   const photos = await Album.getAlbumPhotos(getUserAlbumsDetails);
   res.status(200).send(photos[0]);
 };
