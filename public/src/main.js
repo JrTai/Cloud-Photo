@@ -330,8 +330,44 @@ function addAlbum () {
           // eslint-disable-next-line no-undef
           swal(`Adding Photos to "${value}" Album...`);
           // then call ajax to things
+          addPhotoToAlbum(`${value}`);
         }
       });
+    }
+  });
+}
+
+function addPhotoToAlbum (albumName) {
+  const localStorage = window.localStorage;
+  const selectedPhotos = document.querySelectorAll(".selected");
+  const photos = [];
+  for (const photo of selectedPhotos) {
+    photos.push(photo.src);
+  }
+
+  const data = { albumName: albumName, photos: photos };
+  // eslint-disable-next-line no-undef
+  $.ajax({
+    type: "POST",
+    url: "/api/1.0/user/photos/exist/album",
+    headers: {
+      Authorization: "Bearer " + localStorage.access_token
+    },
+    data: JSON.stringify(data),
+    processData: false,
+    contentType: "application/json",
+    success: function (result) {
+      if (result.created) {
+        // eslint-disable-next-line no-undef
+        swal(result.msg, "Please click the button!", "success");
+        deselectAllPhoto();
+      } else {
+        // eslint-disable-next-line no-undef
+        swal(result.msg, "Please click the button!", "error");
+      }
+    },
+    error: function (xhr, desc, err) {
+      console.log(err);
     }
   });
 }
