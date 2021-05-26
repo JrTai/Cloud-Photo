@@ -27,7 +27,9 @@ $(document).ready(function () {
         photos();
         // eslint-disable-next-line no-undef
         notReachEnd = false;
-      } else if (sideBarSection.innerHTML.split(">")[1].trim() === "Shared Album") {
+      } else if (
+        sideBarSection.innerHTML.split(">")[1].trim() === "Shared Album"
+      ) {
         albums(true);
         // eslint-disable-next-line no-undef
         notReachEnd = false;
@@ -631,6 +633,7 @@ function uploadPhoto () {
         swal(msg, "Please click the button!", "success");
         const header = document.querySelector("header");
         const plusElement = document.querySelector("#plus");
+        const minusElement = document.querySelector("#minus");
         const input = `<input
                         type="file"
                         id="imgupload"
@@ -640,8 +643,13 @@ function uploadPhoto () {
                         accept="image/*"
                        />`;
         header.insertAdjacentHTML("beforeend", input);
-        cleanScreen(plusElement);
-        photos();
+        const sideBarSection = document.querySelector(".active");
+        const section = sideBarSection.innerHTML.split(">")[1].trim();
+        if (section === "Photos") {
+          // only refresh page if section is photos
+          cleanScreen(plusElement, minusElement);
+          photos();
+        }
       },
       error: function (e) {
         console.log("some error:", e);
