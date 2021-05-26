@@ -5,6 +5,7 @@ const { wrapAsync, authentication } = require("../../util/util");
 const {
   userPhotos,
   userAlbums,
+  userTrash,
   userNewAlbum,
   deletePhotos,
   addPhotoToAlbum
@@ -13,6 +14,8 @@ const {
 router.route("/user/photos").post(authentication(), wrapAsync(userPhotos));
 
 router.route("/user/albums").post(authentication(), wrapAsync(userAlbums));
+
+router.route("/user/trash").post(authentication(), wrapAsync(userTrash));
 
 router.route("/user/new/album").post(authentication(), wrapAsync(userNewAlbum));
 

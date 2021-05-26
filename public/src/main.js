@@ -27,6 +27,18 @@ $(document).ready(function () {
         photos();
         // eslint-disable-next-line no-undef
         notReachEnd = false;
+      } else if (sideBarSection.innerHTML.split(">")[1].trim() === "Shared Album") {
+        albums(true);
+        // eslint-disable-next-line no-undef
+        notReachEnd = false;
+      } else if (sideBarSection.innerHTML.split(">")[1].trim() === "My Album") {
+        albums(false);
+        // eslint-disable-next-line no-undef
+        notReachEnd = false;
+      } else if (sideBarSection.innerHTML.split(">")[1].trim() === "Trash") {
+        trash();
+        // eslint-disable-next-line no-undef
+        notReachEnd = false;
       }
     }
     if (bottom - position > 200) {
@@ -73,6 +85,7 @@ document.addEventListener("click", function (event) {
       cleanScreen(plusElement, minusElement);
     } else if (targetElement.innerHTML.split(">")[1].trim() === "Trash") {
       cleanScreen(plusElement, minusElement);
+      trash();
     }
   } else if (
     targetElement.tagName === "IMG" &&
@@ -125,6 +138,67 @@ document.addEventListener("click", function (event) {
     });
   }
 });
+
+function trash () {
+  const localStorage = window.localStorage;
+  // eslint-disable-next-line no-undef
+  const data = { loadIndex: loadIndex };
+  // eslint-disable-next-line no-undef
+  $.ajax({
+    type: "POST",
+    url: "/api/1.0/user/trash",
+    headers: {
+      Authorization: "Bearer " + localStorage.access_token
+    },
+    data: JSON.stringify(data),
+    processData: false,
+    contentType: "application/json",
+    success: function (photos, status) {
+      if (photos.length) {
+        try {
+          const photoZone = document.querySelector(".col-lg-10");
+          let photoDate;
+          if (photoZone.innerHTML === "") {
+            photoDate = photos[0].upload_date;
+            const date = `<br /><br /><br /><br />
+                      <br />
+                      <p class="photo-date">${photoDate}</p>
+                      <br />`;
+
+            photoZone.insertAdjacentHTML("beforeend", date);
+          } else {
+            const dateZones = document.querySelectorAll(".photo-date");
+            photoDate = dateZones[dateZones.length - 1].innerHTML;
+          }
+          for (const photo of photos) {
+            const eachPhotoDate = photo.upload_date;
+            if (eachPhotoDate !== photoDate) {
+              photoDate = eachPhotoDate;
+              const photoZone = document.querySelector(".col-lg-10");
+              const date = `<br />
+                          <br />
+                          <p class="photo-date">${photoDate}</p>
+                          <br />`;
+              photoZone.insertAdjacentHTML("beforeend", date);
+            }
+            const img = `<img
+                          src="${photo.url}"
+                          class="d-inline-block align-text-top photo"
+                       />`;
+            photoZone.insertAdjacentHTML("beforeend", img);
+          }
+          // eslint-disable-next-line no-undef
+          loadIndex += photoNumberPerLoad;
+        } catch (error) {
+          console.error(`Show user photos error: ${error}`);
+        }
+      }
+    },
+    error: function (xhr, desc, err) {
+      console.log(err);
+    }
+  });
+}
 
 function albums (shared) {
   const localStorage = window.localStorage;

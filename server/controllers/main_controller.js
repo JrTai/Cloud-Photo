@@ -8,6 +8,13 @@ const userPhotos = async (req, res) => {
   res.status(200).send(photos);
 };
 
+const userTrash = async (req, res) => {
+  const index = req.body.loadIndex;
+  const getPhotosDetails = `SELECT * FROM photo WHERE user_id = ${req.user.user_id} AND trash = true ORDER BY UNIX_TIMESTAMP(date) DESC LIMIT ${index}, 20;`;
+  const photos = await Photo.getPhotos(getPhotosDetails);
+  res.status(200).send(photos);
+};
+
 const userAlbums = async (req, res) => {
   const index = req.body.loadIndex;
   const shared = req.body.shared;
@@ -80,6 +87,7 @@ const addPhotoToAlbum = async (req, res) => {
 module.exports = {
   userPhotos,
   userAlbums,
+  userTrash,
   userNewAlbum,
   deletePhotos,
   addPhotoToAlbum
