@@ -30,7 +30,32 @@ const getPhotos = async (sql) => {
   }
 };
 
+const deletePhotoToTrash = async (photos) => {
+  const conn = await pool.getConnection();
+  try {
+    await conn.query("START TRANSACTION");
+    let deletePhoto =
+      "UPDATE photo SET album_id = null, trash = true WHERE url IN";
+    let url = "(";
+    for (const photoURL of photos) {
+      url += `"${photoURL}"` + ", ";
+    }
+    url = url.slice(0, -2);
+    url += ");";
+    deletePhoto += url;
+    await conn.query(deletePhoto);
+    await conn.query("COMMIT");
+    return "Delete Photos To Trash Complete";
+  } catch (error) {
+    await conn.query("ROLLBACK");
+    return error;
+  } finally {
+    await conn.release();
+  }
+};
+
 module.exports = {
   insertPhotos,
-  getPhotos
+  getPhotos,
+  deletePhotoToTrash
 };

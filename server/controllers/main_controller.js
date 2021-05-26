@@ -3,7 +3,7 @@ const Album = require("../models/album_model");
 
 const userPhotos = async (req, res) => {
   const index = req.body.loadIndex;
-  const getPhotosDetails = `SELECT * FROM photo WHERE user_id = ${req.user.user_id} ORDER BY UNIX_TIMESTAMP(date) DESC LIMIT ${index}, 20;`;
+  const getPhotosDetails = `SELECT * FROM photo WHERE user_id = ${req.user.user_id} AND trash != true ORDER BY UNIX_TIMESTAMP(date) DESC LIMIT ${index}, 20;`;
   const photos = await Photo.getPhotos(getPhotosDetails);
   res.status(200).send(photos);
 };
@@ -30,8 +30,24 @@ const userNewAlbum = async (req, res) => {
   res.status(200).send(`Album "${req.body.albumName}" created!`);
 };
 
+const deletePhotos = async (req, res) => {
+  const photos = req.body.photos;
+  const deleteToTrash = req.body.deleteToTrash;
+  if (deleteToTrash) {
+    await Photo.deletePhotoToTrash(photos);
+  } else {
+    await Album.removePhotosFromAlbum(photos);
+  }
+  if (deleteToTrash) {
+    res.status(200).send("Photo Deleted!");
+  } else {
+    res.status(200).send("Photo Removed From Album!");
+  }
+};
+
 module.exports = {
   userPhotos,
   userAlbums,
-  userNewAlbum
+  userNewAlbum,
+  deletePhotos
 };

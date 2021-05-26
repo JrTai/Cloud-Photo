@@ -187,7 +187,7 @@ function albums (shared) {
 }
 
 // eslint-disable-next-line no-unused-vars
-function deleteToTrash () {
+function deletePhotos () {
   const sideBarSection = document.querySelector(".active");
   const section = sideBarSection.innerHTML.split(">")[1].trim();
   if (section === "Photos") {
@@ -203,7 +203,9 @@ function deleteToTrash () {
       },
       dangerMode: false
     }).then((value) => {
-      console.log(value);
+      if (value === "Delete Photo To Trash") {
+        deletePhotoToTrash(true);
+      }
     });
   } else {
     // eslint-disable-next-line no-undef
@@ -222,9 +224,57 @@ function deleteToTrash () {
       },
       dangerMode: false
     }).then((value) => {
-      console.log(value);
+      if (value === "Delete Photo To Trash") {
+        deletePhotoToTrash(true);
+      } else if (value === "Remove Photo From Album") {
+        deletePhotoToTrash(false);
+      }
     });
   }
+}
+
+function deletePhotoToTrash (deleteToTrash) {
+  const localStorage = window.localStorage;
+  const selectedPhotos = document.querySelectorAll(".selected");
+  const photosURL = [];
+  for (const photo of selectedPhotos) {
+    photosURL.push(photo.src);
+  }
+
+  const data = { deleteToTrash: deleteToTrash, photos: photosURL };
+  // eslint-disable-next-line no-undef
+  $.ajax({
+    type: "POST",
+    url: "/api/1.0/user/delete/photos",
+    headers: {
+      Authorization: "Bearer " + localStorage.access_token
+    },
+    data: JSON.stringify(data),
+    processData: false,
+    contentType: "application/json",
+    success: function (msg) {
+      // eslint-disable-next-line no-undef
+      swal(msg, "Please click the button!", "success");
+      deselectAllPhoto();
+      const plusElement = document.querySelector("#plus");
+      const minusElement = document.querySelector("#minus");
+      const sideBarSection = document.querySelector(".active");
+      const section = sideBarSection.innerHTML.split(">")[1].trim();
+      if (section === "Photos") {
+        cleanScreen(plusElement, minusElement);
+        photos();
+      } else if (section === "Shared Album") {
+        cleanScreen(plusElement, minusElement);
+        albums(true);
+      } else if (section === "My Album") {
+        cleanScreen(plusElement, minusElement);
+        albums(false);
+      }
+    },
+    error: function (xhr, desc, err) {
+      console.log(err);
+    }
+  });
 }
 
 // eslint-disable-next-line no-unused-vars

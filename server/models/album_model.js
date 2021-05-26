@@ -38,6 +38,29 @@ const updatePhotosToAlbum = async (photos, albumId) => {
   }
 };
 
+const removePhotosFromAlbum = async (photos) => {
+  const conn = await pool.getConnection();
+  try {
+    await conn.query("START TRANSACTION");
+    let removePhoto = "UPDATE photo SET album_id = null WHERE url IN";
+    let url = "(";
+    for (const photoURL of photos) {
+      url += `"${photoURL}"` + ", ";
+    }
+    url = url.slice(0, -2);
+    url += ");";
+    removePhoto += url;
+    await conn.query(removePhoto);
+    await conn.query("COMMIT");
+    return "Remove Photos From Album Complete";
+  } catch (error) {
+    await conn.query("ROLLBACK");
+    return error;
+  } finally {
+    await conn.release();
+  }
+};
+
 const getAlbumPhotos = async (sql) => {
   const conn = await pool.getConnection();
   try {
@@ -56,5 +79,6 @@ const getAlbumPhotos = async (sql) => {
 module.exports = {
   insertNewAlbum,
   updatePhotosToAlbum,
-  getAlbumPhotos
+  getAlbumPhotos,
+  removePhotosFromAlbum
 };
