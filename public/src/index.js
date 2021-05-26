@@ -19,6 +19,8 @@ $(document).on("submit", "form", function (event) {
     },
     error: function (e) {
       console.log("some error:", e);
+      // eslint-disable-next-line no-undef
+      swal(JSON.parse(e.responseText).error, "Please click the button!", "error");
     }
   });
 });
