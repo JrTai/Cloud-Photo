@@ -24,10 +24,22 @@ const userNewAlbum = async (req, res) => {
     shared: req.body.shared,
     owner_user_id: req.user.user_id
   };
+  const countAlbum = await Album.countAlbum(req.body.albumName);
+  if (countAlbum[0][0]["COUNT(name)"]) {
+    res
+      .status(200)
+      .send({
+        msg: `Album Name "${req.body.albumName}" Exist!`,
+        created: false
+      });
+    return;
+  }
   const createUserNewAlbum = "INSERT INTO album SET ?";
   const result = await Album.insertNewAlbum(createUserNewAlbum, album);
   await Album.updatePhotosToAlbum(photos, result[0].insertId);
-  res.status(200).send(`Album "${req.body.albumName}" created!`);
+  res
+    .status(200)
+    .send({ msg: `Album "${req.body.albumName}" created!`, created: true });
 };
 
 const deletePhotos = async (req, res) => {

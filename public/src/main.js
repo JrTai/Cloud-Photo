@@ -355,10 +355,15 @@ function createAlbum (albumName, shared) {
     data: JSON.stringify(data),
     processData: false,
     contentType: "application/json",
-    success: function (msg) {
-      // eslint-disable-next-line no-undef
-      swal(msg, "Please click the button!", "success");
-      deselectAllPhoto();
+    success: function (result) {
+      if (result.created) {
+        // eslint-disable-next-line no-undef
+        swal(result.msg, "Please click the button!", "success");
+        deselectAllPhoto();
+      } else {
+        // eslint-disable-next-line no-undef
+        swal(result.msg, "Please click the button!", "error");
+      }
     },
     error: function (xhr, desc, err) {
       console.log(err);
