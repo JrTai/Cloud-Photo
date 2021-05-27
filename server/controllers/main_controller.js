@@ -3,7 +3,7 @@ const Album = require("../models/album_model");
 
 const userPhotos = async (req, res) => {
   const index = req.body.loadIndex;
-  const getPhotosDetails = `SELECT * FROM photo WHERE user_id = ${req.user.user_id} AND trash != true ORDER BY UNIX_TIMESTAMP(date) DESC LIMIT ${index}, 20;`;
+  const getPhotosDetails = `SELECT * FROM photo WHERE user_id = ${req.user.user_id} AND trash != true AND photo_owner_user_id = ${req.user.user_id} ORDER BY UNIX_TIMESTAMP(date) DESC LIMIT ${index}, 20;`;
   const photos = await Photo.getPhotos(getPhotosDetails);
   res.status(200).send(photos);
 };
@@ -26,10 +26,9 @@ const userAlbums = async (req, res) => {
 const userNewAlbum = async (req, res) => {
   const photos = req.body.photos;
   const album = {
-    user_id: req.user.user_id,
     name: req.body.albumName,
     shared: req.body.shared,
-    owner_user_id: req.user.user_id
+    album_owner_user_id: req.user.user_id
   };
   const countAlbum = await Album.countAlbum(req.body.albumName);
   if (countAlbum[0][0]["COUNT(name)"]) {
@@ -49,16 +48,24 @@ const userNewAlbum = async (req, res) => {
 
 const deletePhotos = async (req, res) => {
   const photos = req.body.photos;
+  const userId = req.user.user_id;
+  // check photos ownership
+  const ownership = await Photo.checkOwnership(photos, userId);
+  if (!ownership) {
+    res.status(200).send({ msg: "No Ownership Of Photos!", deleted: false });
+    return;
+  }
   const deleteToTrash = req.body.deleteToTrash;
+  // remove photos from album for all user_id(update many user_id photos, even if photo in other user's album)
   if (deleteToTrash) {
     await Photo.deletePhotoToTrash(photos);
   } else {
     await Album.removePhotosFromAlbum(photos);
   }
   if (deleteToTrash) {
-    res.status(200).send("Photo Deleted!");
+    res.status(200).send({ msg: "Photo Deleted!", deleted: true });
   } else {
-    res.status(200).send("Photo Removed From Album!");
+    res.status(200).send({ msg: "Photo Removed From Album!", deleted: true });
   }
 };
 
@@ -66,21 +73,17 @@ const addPhotoToAlbum = async (req, res) => {
   const countAlbum = await Album.countAlbum(req.body.albumName);
   if (countAlbum[0][0]["COUNT(name)"]) {
     // album exist
-    await Photo.addPhotoToExistAlbum(req.body.photos, req.body.albumName);
-    res
-      .status(200)
-      .send({
-        msg: `Photo Added to Album "${req.body.albumName}"!`,
-        created: true
-      });
+    await Photo.addPhotoToExistAlbum(req.body.photos, req.body.albumName, req.user.user_id);
+    res.status(200).send({
+      msg: `Photo Added to Album "${req.body.albumName}"!`,
+      created: true
+    });
   } else {
     // album not exist
-    res
-      .status(200)
-      .send({
-        msg: `Album "${req.body.albumName}" Not Exist!`,
-        created: false
-      });
+    res.status(200).send({
+      msg: `Album "${req.body.albumName}" Not Exist!`,
+      created: false
+    });
   }
 };
 
