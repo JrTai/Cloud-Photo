@@ -1,9 +1,6 @@
-// eslint-disable-next-line no-undef
-photoNumberPerLoad = 20;
-// eslint-disable-next-line no-undef
-notReachEnd = true;
-// eslint-disable-next-line no-undef
-loadIndex = 0;
+const photoNumberPerLoad = 20;
+let notReachEnd = true;
+let loadIndex = 0;
 authentication();
 photos();
 
@@ -262,6 +259,72 @@ document.addEventListener("click", function (event) {
     }
   }
 });
+
+// eslint-disable-next-line no-unused-vars
+function trashButton (recovery) {
+  if (recovery) {
+    // eslint-disable-next-line no-undef
+    swal({
+      title: "Recover Selected Photos From Trash?",
+      icon: "warning",
+      buttons: true,
+      dangerMode: true
+    }).then((value) => {
+      if (value) {
+        recoveryPhotos(recovery);
+      }
+    });
+  } else {
+    // eslint-disable-next-line no-undef
+    swal({
+      title: "Permanently Delete Selected Photos?",
+      icon: "warning",
+      buttons: true,
+      dangerMode: true
+    }).then((value) => {
+      if (value) {
+        recoveryPhotos(recovery);
+      }
+    });
+  }
+}
+
+// eslint-disable-next-line no-unused-vars
+function recoveryPhotos (recovery) {
+  const localStorage = window.localStorage;
+  const selectedPhotos = document.querySelectorAll(".selected");
+  const photosURL = [];
+  for (const photo of selectedPhotos) {
+    photosURL.push(photo.src);
+  }
+
+  const data = {
+    recoveryPhotos: recovery,
+    photos: photosURL,
+    deletedPhotos: !recovery
+  };
+  // eslint-disable-next-line no-undef
+  $.ajax({
+    type: "POST",
+    url: "/api/1.0/user/trash/set/photos",
+    headers: {
+      Authorization: "Bearer " + localStorage.access_token
+    },
+    data: JSON.stringify(data),
+    processData: false,
+    contentType: "application/json",
+    success: function (result) {
+      // eslint-disable-next-line no-undef
+      swal(result.msg, "Please click the button!", "success");
+      deselectAllPhoto();
+      cleanScreen();
+      trash();
+    },
+    error: function (xhr, desc, err) {
+      console.log(err);
+    }
+  });
+}
 
 function deleteAlbum (albumName) {
   const localStorage = window.localStorage;

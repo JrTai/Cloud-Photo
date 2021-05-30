@@ -3,14 +3,14 @@ const Album = require("../models/album_model");
 
 const userPhotos = async (req, res) => {
   const index = req.body.loadIndex;
-  const getPhotosDetails = `SELECT * FROM photo WHERE user_id = ${req.user.user_id} AND trash != true AND photo_owner_user_id = ${req.user.user_id} ORDER BY UNIX_TIMESTAMP(date) DESC LIMIT ${index}, 20;`;
+  const getPhotosDetails = `SELECT * FROM photo WHERE user_id = ${req.user.user_id} AND trash != true AND photo_deleted != true AND photo_owner_user_id = ${req.user.user_id} ORDER BY UNIX_TIMESTAMP(date) DESC LIMIT ${index}, 20;`;
   const photos = await Photo.getPhotos(getPhotosDetails);
   res.status(200).send(photos);
 };
 
 const userTrash = async (req, res) => {
   const index = req.body.loadIndex;
-  const getPhotosDetails = `SELECT * FROM photo WHERE user_id = ${req.user.user_id} AND trash = true ORDER BY UNIX_TIMESTAMP(date) DESC LIMIT ${index}, 20;`;
+  const getPhotosDetails = `SELECT * FROM photo WHERE user_id = ${req.user.user_id} AND trash = true AND photo_deleted != true ORDER BY UNIX_TIMESTAMP(date) DESC LIMIT ${index}, 20;`;
   const photos = await Photo.getPhotos(getPhotosDetails);
   res.status(200).send(photos);
 };
@@ -135,6 +135,24 @@ const deleteAlbum = async (req, res) => {
   });
 };
 
+const deleteOrRecover = async (req, res) => {
+  const photos = req.body.photos;
+  const recoveryPhotos = req.body.recoveryPhotos;
+  const deletedPhotos = req.body.deletedPhotos;
+
+  await Photo.setTrashPhotos(photos, recoveryPhotos, deletedPhotos);
+  let msg;
+  if (recoveryPhotos) {
+    msg = "Recovered Photos From Trash";
+  }
+  if (deletedPhotos) {
+    msg = "Deleted Photos From Trash";
+  }
+  res.status(200).send({
+    msg: msg
+  });
+};
+
 module.exports = {
   userPhotos,
   userAlbums,
@@ -144,5 +162,6 @@ module.exports = {
   addPhotoToAlbum,
   addUserToAlbum,
   setAlbum,
-  deleteAlbum
+  deleteAlbum,
+  deleteOrRecover
 };

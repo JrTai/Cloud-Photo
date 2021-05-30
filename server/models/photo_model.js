@@ -158,11 +158,40 @@ const addUserToExistAlbum = async (albumName, userId) => {
   }
 };
 
+const setTrashPhotos = async (photos, recoveryPhotos, deletedPhotos) => {
+  const conn = await pool.getConnection();
+  try {
+    await conn.query("START TRANSACTION");
+    let updateTrashPhotos;
+    if (recoveryPhotos) {
+      updateTrashPhotos = "UPDATE photo SET trash = false WHERE url IN";
+    } else if (deletedPhotos) {
+      updateTrashPhotos = "UPDATE photo SET photo_deleted = true WHERE url IN";
+    }
+    let url = "(";
+    for (const photoURL of photos) {
+      url += `"${photoURL}"` + ", ";
+    }
+    url = url.slice(0, -2);
+    url += ");";
+    updateTrashPhotos += url;
+    await conn.query(updateTrashPhotos);
+    await conn.query("COMMIT");
+    return "Update Trash Photos Complete";
+  } catch (error) {
+    await conn.query("ROLLBACK");
+    return error;
+  } finally {
+    await conn.release();
+  }
+};
+
 module.exports = {
   insertPhotos,
   getPhotos,
   deletePhotoToTrash,
   addPhotoToExistAlbum,
   checkOwnership,
-  addUserToExistAlbum
+  addUserToExistAlbum,
+  setTrashPhotos
 };
