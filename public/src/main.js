@@ -53,6 +53,8 @@ $(document).ready(function () {
 document.addEventListener("click", function (event) {
   const plusElement = document.querySelector("#plus");
   const minusElement = document.querySelector("#minus");
+  const deleteElement = document.querySelector("#delete");
+  const recoveryElement = document.querySelector("#recovery");
   const sideBarSection = document.querySelector(".active");
   const targetElement = event.target;
   if (targetElement.tagName === "A") {
@@ -71,22 +73,22 @@ document.addEventListener("click", function (event) {
 
     // different sideBarSection will need to clean screen, then call each section function
     if (targetElement.innerHTML.split(">")[1].trim() === "Photos") {
-      cleanScreen(plusElement, minusElement);
+      cleanScreen();
       photos();
     } else if (
       targetElement.innerHTML.split(">")[1].trim() === "Shared Album"
     ) {
-      cleanScreen(plusElement, minusElement);
+      cleanScreen();
       albums(true);
     } else if (targetElement.innerHTML.split(">")[1].trim() === "My Album") {
-      cleanScreen(plusElement, minusElement);
+      cleanScreen();
       albums(false);
     } else if (targetElement.innerHTML.split(">")[1].trim() === "Photo Diary") {
-      cleanScreen(plusElement, minusElement);
+      cleanScreen();
     } else if (targetElement.innerHTML.split(">")[1].trim() === "Exhibition") {
-      cleanScreen(plusElement, minusElement);
+      cleanScreen();
     } else if (targetElement.innerHTML.split(">")[1].trim() === "Trash") {
-      cleanScreen(plusElement, minusElement);
+      cleanScreen();
       trash();
     }
   } else if (
@@ -109,7 +111,6 @@ document.addEventListener("click", function (event) {
     const selectedElements = document.querySelectorAll(".selected");
     const section = sideBarSection.innerHTML.split(">")[1].trim();
     if (selectedElements.length) {
-      // minus button show
       if (
         section === "Photos" ||
         section === "Shared Album" ||
@@ -117,13 +118,24 @@ document.addEventListener("click", function (event) {
       ) {
         minusElement.setAttribute("style", "cursor: pointer;");
       }
-      // plus button show
       if (section === "Photos") {
         plusElement.setAttribute("style", "cursor: pointer;");
+      }
+      if (section === "Trash") {
+        deleteElement.setAttribute("style", "cursor: pointer;");
+        recoveryElement.setAttribute("style", "cursor: pointer;");
       }
     } else {
       minusElement.setAttribute("style", "cursor: pointer; visibility: Hidden");
       plusElement.setAttribute("style", "cursor: pointer; visibility: Hidden");
+      deleteElement.setAttribute(
+        "style",
+        "cursor: pointer; visibility: Hidden"
+      );
+      recoveryElement.setAttribute(
+        "style",
+        "cursor: pointer; visibility: Hidden"
+      );
     }
   } else if (targetElement.id === "circle") {
     // eslint-disable-next-line no-undef
@@ -267,11 +279,9 @@ function deleteAlbum (albumName) {
     success: function (result) {
       // eslint-disable-next-line no-undef
       swal(result.msg, "Please click the button!", "success");
-      const plusElement = document.querySelector("#plus");
-      const minusElement = document.querySelector("#minus");
       const sideBarSection = document.querySelector(".active");
       const section = sideBarSection.innerHTML.split(">")[1].trim();
-      cleanScreen(plusElement, minusElement);
+      cleanScreen();
       if (section === "Shared Album") {
         albums(true);
       } else {
@@ -300,11 +310,9 @@ function setAlbumShared (albumName, shared) {
     success: function (result) {
       // eslint-disable-next-line no-undef
       swal(result.msg, "Please click the button!", "success");
-      const plusElement = document.querySelector("#plus");
-      const minusElement = document.querySelector("#minus");
       const sideBarSection = document.querySelector(".active");
       const section = sideBarSection.innerHTML.split(">")[1].trim();
-      cleanScreen(plusElement, minusElement);
+      cleanScreen();
       if (section === "Shared Album") {
         albums(true);
       } else {
@@ -599,18 +607,16 @@ function deletePhotoToTrash (deleteToTrash) {
         // eslint-disable-next-line no-undef
         swal(result.msg, "Please click the button!", "success");
         deselectAllPhoto();
-        const plusElement = document.querySelector("#plus");
-        const minusElement = document.querySelector("#minus");
         const sideBarSection = document.querySelector(".active");
         const section = sideBarSection.innerHTML.split(">")[1].trim();
         if (section === "Photos") {
-          cleanScreen(plusElement, minusElement);
+          cleanScreen();
           photos();
         } else if (section === "Shared Album") {
-          cleanScreen(plusElement, minusElement);
+          cleanScreen();
           albums(true);
         } else if (section === "My Album") {
-          cleanScreen(plusElement, minusElement);
+          cleanScreen();
           albums(false);
         }
       } else {
@@ -761,11 +767,17 @@ function deselectAllPhoto () {
   }
 }
 
-function cleanScreen (plusElement, minusElement) {
+function cleanScreen () {
+  const plusElement = document.querySelector("#plus");
+  const minusElement = document.querySelector("#minus");
+  const deleteElement = document.querySelector("#delete");
+  const recoveryElement = document.querySelector("#recovery");
   const photoZone = document.querySelector(".col-lg-10");
   photoZone.innerHTML = "";
   plusElement.setAttribute("style", "cursor: pointer; visibility: Hidden");
   minusElement.setAttribute("style", "cursor: pointer; visibility: Hidden");
+  deleteElement.setAttribute("style", "cursor: pointer; visibility: Hidden");
+  recoveryElement.setAttribute("style", "cursor: pointer; visibility: Hidden");
   // eslint-disable-next-line no-undef
   loadIndex = 0;
 }
@@ -903,8 +915,6 @@ function uploadPhoto () {
         // eslint-disable-next-line no-undef
         swal(msg, "Please click the button!", "success");
         const header = document.querySelector("header");
-        const plusElement = document.querySelector("#plus");
-        const minusElement = document.querySelector("#minus");
         const input = `<input
                         type="file"
                         id="imgupload"
@@ -918,7 +928,7 @@ function uploadPhoto () {
         const section = sideBarSection.innerHTML.split(">")[1].trim();
         if (section === "Photos") {
           // only refresh page if section is photos
-          cleanScreen(plusElement, minusElement);
+          cleanScreen();
           photos();
         }
       },
