@@ -6,7 +6,7 @@ const createUserPhoto = async (req, res) => {
   let uploadSize = 0;
   const userid = req.user.user_id;
   let insertNewPhotos =
-    "INSERT INTO photo (user_id, url, album_id, public, trash, date, diary_id, size, deleted, upload_date, photo_owner_user_id) VALUES ";
+    "INSERT INTO photo (user_id, url, album_id, public, trash, date, diary_id, size, photo_deleted, upload_date, photo_owner_user_id) VALUES ";
   for (let i = 0; i < req.files.length; i += 1) {
     const unixTime = parseInt(req.files[i].key.split(".")[0]);
     const date = moment(unixTime).format("YYYY-MM-DDTHH:mm:ss.SSS");

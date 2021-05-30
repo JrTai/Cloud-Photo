@@ -66,7 +66,7 @@ const addPhotoToExistAlbum = async (photos, albumName, userId) => {
     let otherUser = false;
 
     let insertNewPhotos =
-      "INSERT INTO photo (user_id, url, album_id, public, trash, date, diary_id, size, deleted, upload_date, photo_owner_user_id) VALUES ";
+      "INSERT INTO photo (user_id, url, album_id, public, trash, date, diary_id, size, photo_deleted, upload_date, photo_owner_user_id) VALUES ";
     for (const photoURL of photos) {
       for (const user of users[0]) {
         const eachUserId = user.user_id;
@@ -141,7 +141,7 @@ const addUserToExistAlbum = async (albumName, userId) => {
     const albumPhotos = await conn.query(getAlbumPhotos);
 
     let insertNewPhotos =
-      "INSERT INTO photo (user_id, url, album_id, public, trash, date, diary_id, size, deleted, upload_date, photo_owner_user_id) VALUES ";
+      "INSERT INTO photo (user_id, url, album_id, public, trash, date, diary_id, size, photo_deleted, upload_date, photo_owner_user_id) VALUES ";
     for (const photo of albumPhotos[0]) {
       insertNewPhotos += `(${userId}, "${photo.url}", ${photo.album_id}, false, false, null, null, null, false, null, ${photo.photo_owner_user_id}),`;
     }

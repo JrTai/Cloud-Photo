@@ -671,7 +671,7 @@ function albums (shared) {
               albumName = eachAlbumName;
               const albumZone = document.querySelector(".col-lg-10");
               let name;
-              if (albums[0].user_id === albums[0].album_owner_user_id) {
+              if (album.user_id === album.album_owner_user_id) {
                 name = `<br />
                         <br />
                         <p class="photo-date">${albumName}
