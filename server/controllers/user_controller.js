@@ -45,7 +45,18 @@ const userDetail = async (req, res) => {
   res.status(200).send(req.user);
 };
 
+const checkHasUser = async (req, res) => {
+  const userEmail = req.body.userEmail;
+  const checkResult = await User.checkExist(userEmail);
+  if (checkResult.hasUser) {
+    res.status(200).send({ msg: `Adding User '${userEmail}' To Shared Album...`, hasUser: true, userId: checkResult.userId });
+  } else {
+    res.status(200).send({ msg: "User Does Not Exist!", hasUser: false, userId: null });
+  }
+};
+
 module.exports = {
   signInUp,
-  userDetail
+  userDetail,
+  checkHasUser
 };

@@ -79,7 +79,6 @@ const addPhotoToExistAlbum = async (photos, albumName, userId) => {
     }
     if (otherUser) {
       insertNewPhotos = insertNewPhotos.replace(/.$/, ";");
-      console.log(insertNewPhotos);
       await conn.query(insertNewPhotos);
     }
 
@@ -131,10 +130,39 @@ const checkOwnership = async (photos, userId) => {
   }
 };
 
+const addUserToExistAlbum = async (albumName, userId) => {
+  const conn = await pool.getConnection();
+  try {
+    await conn.query("START TRANSACTION");
+    const getAlbum = `SELECT album_id FROM album WHERE name = '${albumName}'`;
+    const albumDetail = await conn.query(getAlbum);
+    const albumId = albumDetail[0][0].album_id;
+    const getAlbumPhotos = `SELECT * FROM photo WHERE album_id = '${albumId}'`;
+    const albumPhotos = await conn.query(getAlbumPhotos);
+
+    let insertNewPhotos =
+      "INSERT INTO photo (user_id, url, album_id, public, trash, date, diary_id, size, deleted, upload_date, photo_owner_user_id) VALUES ";
+    for (const photo of albumPhotos[0]) {
+      insertNewPhotos += `(${userId}, "${photo.url}", ${photo.album_id}, false, false, null, null, null, false, null, ${photo.photo_owner_user_id}),`;
+    }
+    insertNewPhotos = insertNewPhotos.replace(/.$/, ";");
+    await conn.query(insertNewPhotos);
+
+    await conn.query("COMMIT");
+    return "Add User To Ablum Complete";
+  } catch (error) {
+    await conn.query("ROLLBACK");
+    return error;
+  } finally {
+    await conn.release();
+  }
+};
+
 module.exports = {
   insertPhotos,
   getPhotos,
   deletePhotoToTrash,
   addPhotoToExistAlbum,
-  checkOwnership
+  checkOwnership,
+  addUserToExistAlbum
 };

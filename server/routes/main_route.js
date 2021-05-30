@@ -8,7 +8,10 @@ const {
   userTrash,
   userNewAlbum,
   deletePhotos,
-  addPhotoToAlbum
+  addPhotoToAlbum,
+  addUserToAlbum,
+  setAlbum,
+  deleteAlbum
 } = require("../controllers/main_controller");
 
 router.route("/user/photos").post(authentication(), wrapAsync(userPhotos));
@@ -20,6 +23,12 @@ router.route("/user/trash").post(authentication(), wrapAsync(userTrash));
 router.route("/user/new/album").post(authentication(), wrapAsync(userNewAlbum));
 
 router.route("/user/photos/exist/album").post(authentication(), wrapAsync(addPhotoToAlbum));
+
+router.route("/user/exist/album").post(authentication(), wrapAsync(addUserToAlbum));
+
+router.route("/user/set/album").post(authentication(), wrapAsync(setAlbum));
+
+router.route("/user/delete/album").post(authentication(), wrapAsync(deleteAlbum));
 
 router
   .route("/user/delete/photos")

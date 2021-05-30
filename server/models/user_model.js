@@ -108,7 +108,28 @@ const getUserDetail = async (email) => {
   }
 };
 
+const checkExist = async (email) => {
+  const conn = await pool.getConnection();
+  try {
+    const users = await conn.query("SELECT * FROM user WHERE email = ?", [
+      email
+    ]);
+    const user = users[0][0];
+    if (user) {
+      return { hasUser: true, userId: user.user_id };
+    } else {
+      return { hasUser: false, userId: null };
+    }
+  } catch (error) {
+    await conn.query("ROLLBACK");
+    return { error };
+  } finally {
+    await conn.release();
+  }
+};
+
 module.exports = {
   signInUp,
-  getUserDetail
+  getUserDetail,
+  checkExist
 };

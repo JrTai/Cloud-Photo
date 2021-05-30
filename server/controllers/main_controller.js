@@ -18,7 +18,12 @@ const userTrash = async (req, res) => {
 const userAlbums = async (req, res) => {
   const index = req.body.loadIndex;
   const shared = req.body.shared;
-  const getUserAlbumsDetails = `SELECT * FROM photo JOIN album ON photo.album_id = album.album_id WHERE photo.user_id IN (${req.user.user_id}) AND album.shared = ${shared} ORDER BY album.album_id DESC LIMIT ${index}, 20;`;
+  let getUserAlbumsDetails;
+  if (shared) {
+    getUserAlbumsDetails = `SELECT * FROM photo JOIN album ON photo.album_id = album.album_id WHERE photo.user_id IN (${req.user.user_id}) AND album.shared = ${shared} AND album.album_deleted != true ORDER BY album.album_id DESC LIMIT ${index}, 20;`;
+  } else {
+    getUserAlbumsDetails = `SELECT * FROM photo JOIN album ON photo.album_id = album.album_id WHERE photo.user_id IN (${req.user.user_id}) AND album.shared = ${shared} AND album.album_owner_user_id = ${req.user.user_id} AND album.album_deleted != true ORDER BY album.album_id DESC LIMIT ${index}, 20;`;
+  }
   const photos = await Album.getAlbumPhotos(getUserAlbumsDetails);
   res.status(200).send(photos[0]);
 };
@@ -73,7 +78,11 @@ const addPhotoToAlbum = async (req, res) => {
   const countAlbum = await Album.countAlbum(req.body.albumName);
   if (countAlbum[0][0]["COUNT(name)"]) {
     // album exist
-    await Photo.addPhotoToExistAlbum(req.body.photos, req.body.albumName, req.user.user_id);
+    await Photo.addPhotoToExistAlbum(
+      req.body.photos,
+      req.body.albumName,
+      req.user.user_id
+    );
     res.status(200).send({
       msg: `Photo Added to Album "${req.body.albumName}"!`,
       created: true
@@ -87,11 +96,53 @@ const addPhotoToAlbum = async (req, res) => {
   }
 };
 
+const addUserToAlbum = async (req, res) => {
+  const albumName = req.body.albumName;
+  const userEmail = req.body.userEmail;
+  const userId = req.body.userId;
+
+  // album exist
+  await Photo.addUserToExistAlbum(albumName, userId);
+  res.status(200).send({
+    msg: `User '${userEmail}' Added to Album "${albumName}"!`,
+    created: true
+  });
+};
+
+const setAlbum = async (req, res) => {
+  const albumName = req.body.albumName;
+  const shared = req.body.shared;
+
+  await Album.setAlbumAuthority(albumName, shared);
+  let msg;
+  if (shared) {
+    msg = `Set Album '${albumName}' As Shared Album`;
+  } else {
+    msg = `Set Album '${albumName}' As My Album`;
+  }
+  res.status(200).send({
+    msg: msg
+  });
+};
+
+const deleteAlbum = async (req, res) => {
+  const albumName = req.body.albumName;
+
+  await Album.setAlbumDeleted(albumName);
+  const msg = `Successfully Remove Album '${albumName}'`;
+  res.status(200).send({
+    msg: msg
+  });
+};
+
 module.exports = {
   userPhotos,
   userAlbums,
   userTrash,
   userNewAlbum,
   deletePhotos,
-  addPhotoToAlbum
+  addPhotoToAlbum,
+  addUserToAlbum,
+  setAlbum,
+  deleteAlbum
 };

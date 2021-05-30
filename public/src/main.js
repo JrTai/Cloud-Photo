@@ -138,8 +138,237 @@ document.addEventListener("click", function (event) {
         window.location.href = "/index.html";
       }
     });
+  } else if (targetElement.classList.contains("owner")) {
+    const section = sideBarSection.innerHTML.split(">")[1].trim();
+    const albumName = targetElement.parentElement.innerHTML
+      .split("<")[0]
+      .trim();
+    if (section === "Shared Album") {
+      // eslint-disable-next-line no-undef
+      swal({
+        title: "What Do You Want For This Album? ",
+        icon: "warning",
+        buttons: {
+          A: {
+            text: "Add User",
+            value: "Add User"
+          },
+          B: {
+            text: "Set As My Album",
+            value: "Set As My Album"
+          },
+          C: {
+            text: "Remove Album",
+            value: "Remove Album"
+          }
+        },
+        dangerMode: false
+      }).then((value) => {
+        if (value === "Add User") {
+          // eslint-disable-next-line no-undef
+          swal("Please Enter Full User Email", {
+            content: "input"
+          }).then((value) => {
+            if (value !== "" && value !== null) {
+              // check user exist
+              checkUserExist(albumName, value);
+            }
+          });
+        } else if (value === "Set As My Album") {
+          // eslint-disable-next-line no-undef
+          swal({
+            title: "Set Album as My Album?",
+            icon: "warning",
+            buttons: true,
+            dangerMode: true
+          }).then((value) => {
+            if (value) {
+              // start set album as my album
+              setAlbumShared(albumName, false);
+            }
+          });
+        } else if (value === "Remove Album") {
+          // eslint-disable-next-line no-undef
+          swal({
+            title: "Remove Album?",
+            icon: "warning",
+            buttons: true,
+            dangerMode: true
+          }).then((value) => {
+            if (value) {
+              // start remove this album
+              deleteAlbum(albumName);
+            }
+          });
+        }
+      });
+    } else if (section === "My Album") {
+      // eslint-disable-next-line no-undef
+      swal({
+        title: "What Do You Want For This Album? ",
+        icon: "warning",
+        buttons: {
+          A: {
+            text: "Set As Shared Album",
+            value: "Set As Shared Album"
+          },
+          B: {
+            text: "Remove Album",
+            value: "Remove Album"
+          }
+        },
+        dangerMode: false
+      }).then((value) => {
+        if (value === "Set As Shared Album") {
+          // eslint-disable-next-line no-undef
+          swal({
+            title: "Set Album as Shared Album?",
+            icon: "warning",
+            buttons: true,
+            dangerMode: true
+          }).then((value) => {
+            if (value) {
+              // start set album as shared album
+              setAlbumShared(albumName, true);
+            }
+          });
+        } else if (value === "Remove Album") {
+          // eslint-disable-next-line no-undef
+          swal({
+            title: "Remove Album?",
+            icon: "warning",
+            buttons: true,
+            dangerMode: true
+          }).then((value) => {
+            if (value) {
+              // start remove this album
+              deleteAlbum(albumName);
+            }
+          });
+        }
+      });
+    }
   }
 });
+
+function deleteAlbum (albumName) {
+  const localStorage = window.localStorage;
+  const data = { albumName: albumName };
+  // eslint-disable-next-line no-undef
+  $.ajax({
+    type: "POST",
+    url: "/api/1.0/user/delete/album",
+    headers: {
+      Authorization: "Bearer " + localStorage.access_token
+    },
+    data: JSON.stringify(data),
+    processData: false,
+    contentType: "application/json",
+    success: function (result) {
+      // eslint-disable-next-line no-undef
+      swal(result.msg, "Please click the button!", "success");
+      const plusElement = document.querySelector("#plus");
+      const minusElement = document.querySelector("#minus");
+      const sideBarSection = document.querySelector(".active");
+      const section = sideBarSection.innerHTML.split(">")[1].trim();
+      cleanScreen(plusElement, minusElement);
+      if (section === "Shared Album") {
+        albums(true);
+      } else {
+        albums(false);
+      }
+    },
+    error: function (xhr, desc, err) {
+      console.log(err);
+    }
+  });
+}
+
+function setAlbumShared (albumName, shared) {
+  const localStorage = window.localStorage;
+  const data = { albumName: albumName, shared: shared };
+  // eslint-disable-next-line no-undef
+  $.ajax({
+    type: "POST",
+    url: "/api/1.0/user/set/album",
+    headers: {
+      Authorization: "Bearer " + localStorage.access_token
+    },
+    data: JSON.stringify(data),
+    processData: false,
+    contentType: "application/json",
+    success: function (result) {
+      // eslint-disable-next-line no-undef
+      swal(result.msg, "Please click the button!", "success");
+      const plusElement = document.querySelector("#plus");
+      const minusElement = document.querySelector("#minus");
+      const sideBarSection = document.querySelector(".active");
+      const section = sideBarSection.innerHTML.split(">")[1].trim();
+      cleanScreen(plusElement, minusElement);
+      if (section === "Shared Album") {
+        albums(true);
+      } else {
+        albums(false);
+      }
+    },
+    error: function (xhr, desc, err) {
+      console.log(err);
+    }
+  });
+}
+
+function checkUserExist (albumName, userEmail) {
+  const localStorage = window.localStorage;
+  const data = { userEmail: userEmail };
+  // eslint-disable-next-line no-undef
+  $.ajax({
+    type: "POST",
+    url: "/api/1.0/user/exist",
+    headers: {
+      Authorization: "Bearer " + localStorage.access_token
+    },
+    data: JSON.stringify(data),
+    processData: false,
+    contentType: "application/json",
+    success: function (result) {
+      if (result.hasUser) {
+        // eslint-disable-next-line no-undef
+        swal(result.msg);
+        // then add user to this album
+        addUserToAlbum(albumName, userEmail, result.userId);
+      } else {
+        // eslint-disable-next-line no-undef
+        swal(result.msg, "Please click the button!", "error");
+      }
+    },
+    error: function (xhr, desc, err) {
+      console.log(err);
+    }
+  });
+}
+
+function addUserToAlbum (albumName, userEmail, userId) {
+  const localStorage = window.localStorage;
+  const data = { albumName: albumName, userEmail: userEmail, userId: userId };
+  // eslint-disable-next-line no-undef
+  $.ajax({
+    type: "POST",
+    url: "/api/1.0/user/exist/album",
+    headers: {
+      Authorization: "Bearer " + localStorage.access_token
+    },
+    data: JSON.stringify(data),
+    processData: false,
+    contentType: "application/json",
+    success: function (result) {
+      // eslint-disable-next-line no-undef
+      swal(result.msg, "Please click the button!", "success");
+    },
+    error: function (xhr, desc, err) {
+      console.log(err);
+    }
+  });
+}
 
 function trash () {
   const localStorage = window.localStorage;
@@ -223,10 +452,29 @@ function albums (shared) {
           let albumName;
           if (albumZone.innerHTML === "") {
             albumName = albums[0].name;
-            const name = `<br /><br /><br /><br />
+            let name;
+            if (albums[0].user_id === albums[0].album_owner_user_id) {
+              name = `<br /><br /><br /><br />
+                      <br />
+                      <p class="album-name">${albumName} 
+                        <img
+                          src="./images/owner.png"
+                          alt="owner"
+                          width="20"
+                          height="20"
+                          class="d-inline-block align-text-top owner"
+                          style="cursor: pointer"
+                        />
+                      </p>
+                      <br />
+                        `;
+            } else {
+              name = `<br /><br /><br /><br />
                       <br />
                       <p class="album-name">${albumName}</p>
-                      <br />`;
+                      <br />
+                        `;
+            }
             albumZone.insertAdjacentHTML("beforeend", name);
           } else {
             const albumNameZones = document.querySelectorAll(".album-name");
@@ -237,10 +485,28 @@ function albums (shared) {
             if (eachAlbumName !== albumName) {
               albumName = eachAlbumName;
               const albumZone = document.querySelector(".col-lg-10");
-              const name = `<br />
-                          <br />
-                          <p class="photo-date">${albumName}</p>
-                          <br />`;
+              let name;
+              if (albums[0].user_id === albums[0].album_owner_user_id) {
+                name = `<br />
+                        <br />
+                        <p class="photo-date">${albumName}
+                          <img
+                            src="./images/owner.png"
+                            alt="owner"
+                            width="20"
+                            height="20"
+                            class="d-inline-block align-text-top owner"
+                            style="cursor: pointer"
+                          />
+                        </p>
+                        <br />`;
+              } else {
+                name = `<br />
+                        <br />
+                        <p class="photo-date">${albumName}
+                        </p>
+                        <br />`;
+              }
               albumZone.insertAdjacentHTML("beforeend", name);
             }
             const img = `<img
