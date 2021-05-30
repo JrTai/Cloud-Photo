@@ -52,6 +52,7 @@ document.addEventListener("click", function (event) {
   const minusElement = document.querySelector("#minus");
   const deleteElement = document.querySelector("#delete");
   const recoveryElement = document.querySelector("#recovery");
+  const publicElement = document.querySelector("#public");
   const sideBarSection = document.querySelector(".active");
   const targetElement = event.target;
   if (targetElement.tagName === "A") {
@@ -84,6 +85,7 @@ document.addEventListener("click", function (event) {
       cleanScreen();
     } else if (targetElement.innerHTML.split(">")[1].trim() === "Exhibition") {
       cleanScreen();
+      exhibition();
     } else if (targetElement.innerHTML.split(">")[1].trim() === "Trash") {
       cleanScreen();
       trash();
@@ -117,6 +119,7 @@ document.addEventListener("click", function (event) {
       }
       if (section === "Photos") {
         plusElement.setAttribute("style", "cursor: pointer;");
+        publicElement.setAttribute("style", "cursor: pointer;");
       }
       if (section === "Trash") {
         deleteElement.setAttribute("style", "cursor: pointer;");
@@ -130,6 +133,10 @@ document.addEventListener("click", function (event) {
         "cursor: pointer; visibility: Hidden"
       );
       recoveryElement.setAttribute(
+        "style",
+        "cursor: pointer; visibility: Hidden"
+      );
+      publicElement.setAttribute(
         "style",
         "cursor: pointer; visibility: Hidden"
       );
@@ -259,6 +266,113 @@ document.addEventListener("click", function (event) {
     }
   }
 });
+
+function exhibition () {
+  const localStorage = window.localStorage;
+  // eslint-disable-next-line no-undef
+  const data = { loadIndex: loadIndex };
+  // eslint-disable-next-line no-undef
+  $.ajax({
+    type: "POST",
+    url: "/api/1.0/user/exhibition",
+    headers: {
+      Authorization: "Bearer " + localStorage.access_token
+    },
+    data: JSON.stringify(data),
+    processData: false,
+    contentType: "application/json",
+    success: function (photos, status) {
+      if (photos.length) {
+        try {
+          const photoZone = document.querySelector(".col-lg-10");
+          let photoDate;
+          if (photoZone.innerHTML === "") {
+            photoDate = photos[0].upload_date;
+            const date = `<br /><br /><br /><br />
+                      <br />
+                      <p class="photo-date">${photoDate}</p>
+                      <br />`;
+
+            photoZone.insertAdjacentHTML("beforeend", date);
+          } else {
+            const dateZones = document.querySelectorAll(".photo-date");
+            photoDate = dateZones[dateZones.length - 1].innerHTML;
+          }
+          for (const photo of photos) {
+            const eachPhotoDate = photo.upload_date;
+            if (eachPhotoDate !== photoDate) {
+              photoDate = eachPhotoDate;
+              const photoZone = document.querySelector(".col-lg-10");
+              const date = `<br />
+                          <br />
+                          <p class="photo-date">${photoDate}</p>
+                          <br />`;
+              photoZone.insertAdjacentHTML("beforeend", date);
+            }
+            const img = `<img
+                          src="${photo.url}"
+                          class="d-inline-block align-text-top photo"
+                       />`;
+            photoZone.insertAdjacentHTML("beforeend", img);
+          }
+          // eslint-disable-next-line no-undef
+          loadIndex += photoNumberPerLoad;
+        } catch (error) {
+          console.error(`Show user photos error: ${error}`);
+        }
+      }
+    },
+    error: function (xhr, desc, err) {
+      console.log(err);
+    }
+  });
+}
+
+// eslint-disable-next-line no-unused-vars
+function exhibitionButton () {
+  // eslint-disable-next-line no-undef
+  swal({
+    title: "Set Selected Photos To Exhitbition?",
+    icon: "warning",
+    buttons: true,
+    dangerMode: false
+  }).then((value) => {
+    if (value) {
+      addPhotoPublic();
+    }
+  });
+}
+
+// eslint-disable-next-line no-unused-vars
+function addPhotoPublic () {
+  const localStorage = window.localStorage;
+  const selectedPhotos = document.querySelectorAll(".selected");
+  const photosURL = [];
+  for (const photo of selectedPhotos) {
+    photosURL.push(photo.src);
+  }
+
+  const data = { photos: photosURL };
+  // eslint-disable-next-line no-undef
+  $.ajax({
+    type: "POST",
+    url: "/api/1.0/user/photos/set/exhibition",
+    headers: {
+      Authorization: "Bearer " + localStorage.access_token
+    },
+    data: JSON.stringify(data),
+    processData: false,
+    contentType: "application/json",
+    success: function (result) {
+      // eslint-disable-next-line no-undef
+      swal(result.msg, "Please click the button!", "success");
+      deselectAllPhoto();
+    },
+    error: function (xhr, desc, err) {
+      console.log(err);
+    }
+  });
+}
 
 // eslint-disable-next-line no-unused-vars
 function trashButton (recovery) {
@@ -835,12 +949,14 @@ function cleanScreen () {
   const minusElement = document.querySelector("#minus");
   const deleteElement = document.querySelector("#delete");
   const recoveryElement = document.querySelector("#recovery");
+  const publicElement = document.querySelector("#public");
   const photoZone = document.querySelector(".col-lg-10");
   photoZone.innerHTML = "";
   plusElement.setAttribute("style", "cursor: pointer; visibility: Hidden");
   minusElement.setAttribute("style", "cursor: pointer; visibility: Hidden");
   deleteElement.setAttribute("style", "cursor: pointer; visibility: Hidden");
   recoveryElement.setAttribute("style", "cursor: pointer; visibility: Hidden");
+  publicElement.setAttribute("style", "cursor: pointer; visibility: Hidden");
   // eslint-disable-next-line no-undef
   loadIndex = 0;
 }

@@ -8,6 +8,13 @@ const userPhotos = async (req, res) => {
   res.status(200).send(photos);
 };
 
+const userExhibition = async (req, res) => {
+  const index = req.body.loadIndex;
+  const getPhotosDetails = `SELECT * FROM photo WHERE trash != true AND photo_deleted != true AND public = true ORDER BY UNIX_TIMESTAMP(date) DESC LIMIT ${index}, 20;`;
+  const photos = await Photo.getPhotos(getPhotosDetails);
+  res.status(200).send(photos);
+};
+
 const userTrash = async (req, res) => {
   const index = req.body.loadIndex;
   const getPhotosDetails = `SELECT * FROM photo WHERE user_id = ${req.user.user_id} AND trash = true AND photo_deleted != true ORDER BY UNIX_TIMESTAMP(date) DESC LIMIT ${index}, 20;`;
@@ -153,15 +160,27 @@ const deleteOrRecover = async (req, res) => {
   });
 };
 
+const addPhotoToExhibition = async (req, res) => {
+  const photos = req.body.photos;
+
+  await Photo.setPhotosPublic(photos, req.user.user_id);
+  const msg = "Set Photos To Exhibition";
+  res.status(200).send({
+    msg: msg
+  });
+};
+
 module.exports = {
   userPhotos,
   userAlbums,
   userTrash,
+  userExhibition,
   userNewAlbum,
   deletePhotos,
   addPhotoToAlbum,
   addUserToAlbum,
   setAlbum,
   deleteAlbum,
-  deleteOrRecover
+  deleteOrRecover,
+  addPhotoToExhibition
 };

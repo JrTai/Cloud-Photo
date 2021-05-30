@@ -186,6 +186,29 @@ const setTrashPhotos = async (photos, recoveryPhotos, deletedPhotos) => {
   }
 };
 
+const setPhotosPublic = async (photos, userId) => {
+  const conn = await pool.getConnection();
+  try {
+    await conn.query("START TRANSACTION");
+    let updatePhotosPublic = "UPDATE photo SET public = true WHERE url IN";
+    let url = "(";
+    for (const photoURL of photos) {
+      url += `"${photoURL}"` + ", ";
+    }
+    url = url.slice(0, -2);
+    url += `) AND user_id = ${userId};`;
+    updatePhotosPublic += url;
+    await conn.query(updatePhotosPublic);
+    await conn.query("COMMIT");
+    return "Update Photos To Public Complete";
+  } catch (error) {
+    await conn.query("ROLLBACK");
+    return error;
+  } finally {
+    await conn.release();
+  }
+};
+
 module.exports = {
   insertPhotos,
   getPhotos,
@@ -193,5 +216,6 @@ module.exports = {
   addPhotoToExistAlbum,
   checkOwnership,
   addUserToExistAlbum,
-  setTrashPhotos
+  setTrashPhotos,
+  setPhotosPublic
 };
