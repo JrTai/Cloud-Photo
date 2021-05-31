@@ -267,6 +267,12 @@ document.addEventListener("click", function (event) {
   }
 });
 
+// eslint-disable-next-line no-unused-vars
+function searchByDate () {
+  const input = document.querySelector(".form-control");
+  console.log(input.value);
+}
+
 function exhibition () {
   const localStorage = window.localStorage;
   // eslint-disable-next-line no-undef
