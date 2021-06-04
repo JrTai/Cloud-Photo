@@ -17,6 +17,8 @@
   },
   "homepage": "https://github.com/JrTai/Cloud-Photo#readme",
   "dependencies": {
+    "@azure/cognitiveservices-face": "^4.2.0",
+    "@azure/ms-rest-js": "^2.5.0",
     "aws-sdk": "^2.907.0",
     "bcrypt": "^5.0.1",
     "dotenv": "^9.0.1",
@@ -27,6 +29,7 @@
     "multer-s3": "^2.9.0",
     "mysql": "^2.18.1",
     "mysql2": "^2.2.5",
+    "sharp": "^0.28.3",
     "validator": "^13.6.0"
   },
   "devDependencies": {
