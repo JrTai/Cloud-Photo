@@ -21,9 +21,8 @@ RUN apt-get install -y curl \
     && apt-get install -y nodejs \
     && curl -L https://www.npmjs.com/install.sh | sh \
     && npm install \
-    && npm install pm2 -g \
-    && service nginx start
+    && npm install pm2 -g 
 COPY . .
 EXPOSE 443
-CMD [ "pm2-runtime", "app.js" ]
+CMD [ "pm2-runtime", "app.js", "serive", "nginx", "start" ]
 
