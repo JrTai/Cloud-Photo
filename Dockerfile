@@ -13,6 +13,6 @@ RUN apt-get install -y curl \
     && npm install \
     && npm install pm2 -g
 COPY . .
-EXPOSE 3000
+EXPOSE 443
 CMD [ "pm2-runtime", "app.js" ]
 
