@@ -1,4 +1,3 @@
 #!/bin/bash
-
-pm2-runtime app.js
 service nginx start 
+pm2-runtime app.js

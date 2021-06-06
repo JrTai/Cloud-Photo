@@ -25,7 +25,7 @@ RUN apt-get install -y curl \
 COPY . .
 EXPOSE 443
 # CMD [ "pm2-runtime", "app.js"]
-# ADD start.sh /
-# RUN chmod +x /start.sh
-CMD ["service", "nginx", "start"]
+ADD start.sh /
+RUN chmod +x /start.sh
+CMD ["bash", "start.sh"]
 
