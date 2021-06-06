@@ -292,17 +292,17 @@ function getFacePhotos (faceId) {
     processData: false,
     contentType: "application/json",
     success: function (photos, status) {
+      const faceZone = document.querySelector(".col-lg-10");
+      const backImg = `<br /><br /><br /><br />
+                       <img
+                        src="./images/back.png"
+                        class="back"
+                        onclick="backToFaces()"
+                        style="cursor: pointer"
+                       /><br />
+                       <hr>`;
+      faceZone.insertAdjacentHTML("beforeend", backImg);
       if (photos.length) {
-        const faceZone = document.querySelector(".col-lg-10");
-        const backImg = `<br /><br /><br /><br />
-                         <img
-                          src="./images/back.png"
-                          class="back"
-                          onclick="backToFaces()"
-                          style="cursor: pointer"
-                         /><br />
-                         <hr>`;
-        faceZone.insertAdjacentHTML("beforeend", backImg);
         try {
           for (const photo of photos) {
             const img = `<img
