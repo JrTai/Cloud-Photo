@@ -5,7 +5,7 @@ authentication();
 photos();
 
 // scroll to bottom to call photos
-// will need to call shared albums, my albums, photo diary, photo exhibition, trash
+// will need to call shared albums, my albums, face albums, photo exhibition, trash
 // eslint-disable-next-line no-undef
 $(document).ready(function () {
   // eslint-disable-next-line no-undef
@@ -81,8 +81,9 @@ document.addEventListener("click", function (event) {
     } else if (targetElement.innerHTML.split(">")[1].trim() === "My Album") {
       cleanScreen();
       albums(false);
-    } else if (targetElement.innerHTML.split(">")[1].trim() === "Photo Diary") {
+    } else if (targetElement.innerHTML.split(">")[1].trim() === "Face Album") {
       cleanScreen();
+      faces();
     } else if (targetElement.innerHTML.split(">")[1].trim() === "Exhibition") {
       cleanScreen();
       exhibition();
@@ -154,6 +155,9 @@ document.addEventListener("click", function (event) {
         window.location.href = "/index.html";
       }
     });
+  } else if (targetElement.classList.contains("face")) {
+    cleanScreen();
+    getFacePhotos(parseInt(targetElement.alt));
   } else if (targetElement.classList.contains("owner")) {
     const section = sideBarSection.innerHTML.split(">")[1].trim();
     const albumName = targetElement.parentElement.innerHTML
@@ -271,6 +275,99 @@ document.addEventListener("click", function (event) {
 function searchByDate () {
   const input = document.querySelector(".form-control");
   console.log(input.value);
+}
+
+function getFacePhotos (faceId) {
+  const localStorage = window.localStorage;
+  // eslint-disable-next-line no-undef
+  const data = { loadIndex: loadIndex, faceId: faceId };
+  // eslint-disable-next-line no-undef
+  $.ajax({
+    type: "POST",
+    url: "/api/1.0/user/face/photos",
+    headers: {
+      Authorization: "Bearer " + localStorage.access_token
+    },
+    data: JSON.stringify(data),
+    processData: false,
+    contentType: "application/json",
+    success: function (photos, status) {
+      if (photos.length) {
+        const faceZone = document.querySelector(".col-lg-10");
+        const backImg = `<br /><br /><br /><br />
+                         <img
+                          src="./images/back.png"
+                          class="back"
+                          onclick="backToFaces()"
+                          style="cursor: pointer"
+                         /><br />
+                         <hr>`;
+        faceZone.insertAdjacentHTML("beforeend", backImg);
+        try {
+          for (const photo of photos) {
+            const img = `<img
+                          src="${photo.url}"
+                          class="d-inline-block align-text-top photo"
+                         />`;
+            faceZone.insertAdjacentHTML("beforeend", img);
+          }
+          // eslint-disable-next-line no-undef
+          loadIndex += photoNumberPerLoad;
+        } catch (error) {
+          console.error(`Show user faces error: ${error}`);
+        }
+      }
+    },
+    error: function (xhr, desc, err) {
+      console.log(err);
+    }
+  });
+}
+
+// eslint-disable-next-line no-unused-vars
+function backToFaces () {
+  cleanScreen();
+  faces();
+}
+
+function faces () {
+  const localStorage = window.localStorage;
+  // eslint-disable-next-line no-undef
+  const data = { loadIndex: loadIndex };
+  // eslint-disable-next-line no-undef
+  $.ajax({
+    type: "POST",
+    url: "/api/1.0/user/faces",
+    headers: {
+      Authorization: "Bearer " + localStorage.access_token
+    },
+    data: JSON.stringify(data),
+    processData: false,
+    contentType: "application/json",
+    success: function (faces, status) {
+      if (faces.length) {
+        try {
+          const faceZone = document.querySelector(".col-lg-10");
+          faceZone.insertAdjacentHTML("beforeend", "<br /><br /><br /><br />");
+          for (const face of faces) {
+            const img = `<img
+                          alt="${face.face_id}"
+                          src="${face.face_url}"
+                          class="d-inline-block align-text-top face"
+                       />`;
+            faceZone.insertAdjacentHTML("beforeend", img);
+          }
+          // eslint-disable-next-line no-undef
+          loadIndex += photoNumberPerLoad;
+        } catch (error) {
+          console.error(`Show user faces error: ${error}`);
+        }
+      }
+    },
+    error: function (xhr, desc, err) {
+      console.log(err);
+    }
+  });
 }
 
 function exhibition () {
@@ -1040,7 +1137,6 @@ function authentication () {
     processData: false,
     contentType: false,
     success: function (data) {
-      // console.log(data);
       updateUserInfo(data);
     },
     error: function (xhr, desc, err) {

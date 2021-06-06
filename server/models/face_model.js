@@ -373,11 +373,43 @@ const updatePhotoIncludeFaceId = async (photoFileName, existFaceId) => {
   }
 };
 
+const getFaces = async (sql) => {
+  const conn = await pool.getConnection();
+  try {
+    await conn.query("START TRANSACTION");
+    const photos = await conn.query(sql);
+    await conn.query("COMMIT");
+    return photos[0];
+  } catch (error) {
+    await conn.query("ROLLBACK");
+    return error;
+  } finally {
+    await conn.release();
+  }
+};
+
+const getPhotosDetails = async (sql) => {
+  const conn = await pool.getConnection();
+  try {
+    await conn.query("START TRANSACTION");
+    const photos = await conn.query(sql);
+    await conn.query("COMMIT");
+    return photos[0];
+  } catch (error) {
+    await conn.query("ROLLBACK");
+    return error;
+  } finally {
+    await conn.release();
+  }
+};
+
 module.exports = {
   detectFaceExtract,
   findSimilarFaceFromDB,
   saveCroppedFaceToS3,
   getExistFace,
   insertFace,
-  updatePhotoIncludeFaceId
+  updatePhotoIncludeFaceId,
+  getFaces,
+  getPhotosDetails
 };

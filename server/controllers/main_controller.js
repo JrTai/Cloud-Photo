@@ -1,11 +1,26 @@
 const Photo = require("../models/photo_model");
 const Album = require("../models/album_model");
+const Face = require("../models/face_model");
 
 const userPhotos = async (req, res) => {
   const index = req.body.loadIndex;
   const getPhotosDetails = `SELECT * FROM photo WHERE user_id = ${req.user.user_id} AND trash != true AND photo_deleted != true AND photo_owner_user_id = ${req.user.user_id} ORDER BY UNIX_TIMESTAMP(date) DESC LIMIT ${index}, 20;`;
   const photos = await Photo.getPhotos(getPhotosDetails);
   res.status(200).send(photos);
+};
+
+const userFaces = async (req, res) => {
+  const index = req.body.loadIndex;
+  const getFaceDetails = `SELECT * FROM face WHERE user_id = ${req.user.user_id} ORDER BY face_id LIMIT ${index}, 20;`;
+  const faces = await Face.getFaces(getFaceDetails);
+  res.status(200).send(faces);
+};
+
+const userFacePhotos = async (req, res) => {
+  const index = req.body.loadIndex;
+  const getFacePhotosDetails = `SELECT * FROM photo WHERE user_id = ${req.user.user_id} AND include_face_id LIKE '%${req.body.faceId}%' AND trash != true AND photo_deleted != true AND photo_owner_user_id = ${req.user.user_id} ORDER BY UNIX_TIMESTAMP(date) DESC LIMIT ${index}, 20;`;
+  const faces = await Face.getPhotosDetails(getFacePhotosDetails);
+  res.status(200).send(faces);
 };
 
 const userExhibition = async (req, res) => {
@@ -173,6 +188,8 @@ const addPhotoToExhibition = async (req, res) => {
 module.exports = {
   userPhotos,
   userAlbums,
+  userFaces,
+  userFacePhotos,
   userTrash,
   userExhibition,
   userNewAlbum,

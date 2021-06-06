@@ -51,6 +51,19 @@
   margin: 2px 2px 2px 2px;
 }
 
+.face {
+  width: auto;
+  height: 150px;
+  margin: 2px 2px 2px 2px;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.back {
+  width: auto;
+  height: 20px
+}
+
 .photo:hover {
   transition: box-shadow 0.25s;
   box-shadow: 0 8px 17px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);

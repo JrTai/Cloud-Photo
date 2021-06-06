@@ -5,6 +5,8 @@ const { wrapAsync, authentication } = require("../../util/util");
 const {
   userPhotos,
   userAlbums,
+  userFaces,
+  userFacePhotos,
   userTrash,
   userExhibition,
   userNewAlbum,
@@ -20,6 +22,10 @@ const {
 router.route("/user/photos").post(authentication(), wrapAsync(userPhotos));
 
 router.route("/user/albums").post(authentication(), wrapAsync(userAlbums));
+
+router.route("/user/faces").post(authentication(), wrapAsync(userFaces));
+
+router.route("/user/face/photos").post(authentication(), wrapAsync(userFacePhotos));
 
 router.route("/user/trash").post(authentication(), wrapAsync(userTrash));
 
