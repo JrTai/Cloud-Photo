@@ -16,10 +16,12 @@ COPY ssl.key /etc/nginx/ssl.key
 
 # COPY nginx.config /etc/nginx/conf.d/default.conf
 COPY package*.json ./
-RUN apt-get install -y curl \
+RUN apt-get update \
+    && apt-get install -y curl \
     && curl -sL https://deb.nodesource.com/setup_14.x | bash - \
     && apt-get install -y nodejs \
     && curl -L https://www.npmjs.com/install.sh | sh \
+    && apt-get -y install procps \
     && npm install \
     && npm install pm2 -g 
 COPY . .
