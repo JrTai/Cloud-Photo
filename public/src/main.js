@@ -55,6 +55,14 @@ document.addEventListener("click", function (event) {
   const publicElement = document.querySelector("#public");
   const sideBarSection = document.querySelector(".active");
   const targetElement = event.target;
+  if (targetElement.classList.contains("zoom")) {
+    // prevent open href link at first click
+    event.preventDefault();
+    // show popup img at second click
+    // eslint-disable-next-line no-undef
+    $(".image-link").magnificPopup({ type: "image" });
+  }
+
   if (targetElement.tagName === "A") {
     // console.log("click A");
     if (
@@ -305,10 +313,21 @@ function getFacePhotos (faceId) {
       if (photos.length) {
         try {
           for (const photo of photos) {
-            const img = `<img
+            const img = `<div class="d-inline-block align-text-top img-container">
+                         <img
                           src="${photo.url}"
                           class="d-inline-block align-text-top photo"
-                         />`;
+                         />
+                         <div class="middle">
+                            <a class="image-link" href="${photo.url}">
+                            <img
+                            src="./images/zoom.png"
+                            class="d-inline-block align-text-top zoom"
+                            style="cursor: pointer"
+                            />
+                            </a>
+                         </div>
+                         </div>`;
             faceZone.insertAdjacentHTML("beforeend", img);
           }
           // eslint-disable-next-line no-undef
@@ -412,10 +431,21 @@ function exhibition () {
                           <br />`;
               photoZone.insertAdjacentHTML("beforeend", date);
             }
-            const img = `<img
-                          src="${photo.url}"
-                          class="d-inline-block align-text-top photo"
-                       />`;
+            const img = `<div class="d-inline-block align-text-top img-container">
+                          <img
+                            src="${photo.url}"
+                            class="d-inline-block align-text-top photo"
+                          />
+                         <div class="middle">
+                          <a class="image-link" href="${photo.url}">
+                           <img
+                            src="./images/zoom.png"
+                            class="d-inline-block align-text-top zoom"
+                            style="cursor: pointer"
+                           />
+                          </a>
+                         </div>
+                         </div>`;
             photoZone.insertAdjacentHTML("beforeend", img);
           }
           // eslint-disable-next-line no-undef
@@ -700,10 +730,21 @@ function trash () {
                           <br />`;
               photoZone.insertAdjacentHTML("beforeend", date);
             }
-            const img = `<img
-                          src="${photo.url}"
-                          class="d-inline-block align-text-top photo"
-                       />`;
+            const img = `<div class="d-inline-block align-text-top img-container">
+                          <img
+                           src="${photo.url}"
+                           class="d-inline-block align-text-top photo"
+                          />
+                         <div class="middle">
+                          <a class="image-link" href="${photo.url}">
+                          <img
+                           src="./images/zoom.png"
+                           class="d-inline-block align-text-top zoom"
+                           style="cursor: pointer"
+                          />
+                          </a>
+                         </div>
+                         </div>`;
             photoZone.insertAdjacentHTML("beforeend", img);
           }
           // eslint-disable-next-line no-undef
@@ -797,10 +838,21 @@ function albums (shared) {
               }
               albumZone.insertAdjacentHTML("beforeend", name);
             }
-            const img = `<img
+            const img = `<div class="d-inline-block align-text-top img-container">
+                         <img
                           src="${album.url}"
                           class="d-inline-block align-text-top photo"
-                       />`;
+                         />
+                         <div class="middle">
+                            <a class="image-link" href="${album.url}">
+                            <img
+                            src="./images/zoom.png"
+                            class="d-inline-block align-text-top zoom"
+                            style="cursor: pointer"
+                            />
+                            </a>
+                         </div>
+                         </div>`;
             albumZone.insertAdjacentHTML("beforeend", img);
           }
           // eslint-disable-next-line no-undef
@@ -1106,10 +1158,21 @@ function photos () {
                           <br />`;
               photoZone.insertAdjacentHTML("beforeend", date);
             }
-            const img = `<img
+            const img = `<div class="d-inline-block align-text-top img-container">
+                         <img
                           src="${photo.url}"
                           class="d-inline-block align-text-top photo"
-                       />`;
+                         />
+                         <div class="middle">
+                            <a class="image-link" href="${photo.url}">
+                            <img
+                            src="./images/zoom.png"
+                            class="d-inline-block align-text-top zoom"
+                            style="cursor: pointer"
+                            />
+                            </a>
+                         </div>
+                         </div>`;
             photoZone.insertAdjacentHTML("beforeend", img);
           }
           // eslint-disable-next-line no-undef

@@ -61,12 +61,38 @@
 
 .back {
   width: auto;
-  height: 20px
+  height: 20px;
 }
 
 .photo:hover {
   transition: box-shadow 0.25s;
   box-shadow: 0 8px 17px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+.zoom {
+  width: auto;
+  height: 40px;
+}
+
+.img-container {
+  display: flex;
+  position: relative;
+  width: fit-content;
+}
+
+.middle {
+  transition: .5s ease;
+  opacity: 0;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  -ms-transform: translate(-50%, -50%);
+  text-align: center;
+}
+
+.img-container:hover .middle {
+  opacity: 0.9;
 }
 
 .selected {
