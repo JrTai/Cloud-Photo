@@ -122,9 +122,10 @@ const addUserToAlbum = async (req, res) => {
   const albumName = req.body.albumName;
   const userEmail = req.body.userEmail;
   const userId = req.body.userId;
+  const albumOwnerUserId = req.user.user_id;
 
   // album exist
-  await Photo.addUserToExistAlbum(albumName, userId);
+  await Photo.addUserToExistAlbum(albumName, userId, albumOwnerUserId);
   res.status(200).send({
     msg: `User '${userEmail}' Added to Album "${albumName}"!`,
     created: true

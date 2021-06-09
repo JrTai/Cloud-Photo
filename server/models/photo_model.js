@@ -140,14 +140,14 @@ const checkOwnership = async (photos, userId) => {
   }
 };
 
-const addUserToExistAlbum = async (albumName, userId) => {
+const addUserToExistAlbum = async (albumName, userId, albumOwnerUserId) => {
   const conn = await pool.getConnection();
   try {
     await conn.query("START TRANSACTION");
     const getAlbum = `SELECT album_id FROM album WHERE name = '${albumName}'`;
     const albumDetail = await conn.query(getAlbum);
     const albumId = albumDetail[0][0].album_id;
-    const getAlbumPhotos = `SELECT * FROM photo WHERE album_id = '${albumId}'`;
+    const getAlbumPhotos = `SELECT * FROM photo WHERE album_id = '${albumId}' and user_id = '${albumOwnerUserId}'`;
     const albumPhotos = await conn.query(getAlbumPhotos);
 
     let insertNewPhotos =
