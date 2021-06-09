@@ -1226,8 +1226,16 @@ function updateUserInfo (data) {
                              Used ${data.storage.toFixed(0)}% of 2GB`;
 }
 
+const uploadButton = document.getElementById("upload");
+uploadButton.addEventListener("click", (e) => {
+  e.preventDefault();
+  uploadPhoto();
+}, true);
+// uploadButton.addEventListener("click", uploadPhoto(event), true);
+
 // eslint-disable-next-line no-unused-vars
-function uploadPhoto () {
+function uploadPhoto (event) {
+  // event.preventDefault();
   const localStorage = window.localStorage;
   // eslint-disable-next-line no-undef
   $("#imgupload").trigger("click");
