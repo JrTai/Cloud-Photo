@@ -64,13 +64,20 @@ const addPhotoToExistAlbum = async (photos, albumName, userId) => {
     const usersOfAlum = `SELECT DISTINCT user_id FROM photo WHERE album_id = ${albumId[0][0].album_id}`;
     const users = await conn.query(usersOfAlum);
     let otherUser = false;
+    // get photos in album, to omit photo add to album multi times
+    const getPhotosInAlum = `SELECT DISTINCT url FROM photo WHERE album_id = ${albumId[0][0].album_id}`;
+    const photosInAlum = await conn.query(getPhotosInAlum);
+    const albumPhotosSet = new Set();
+    for (const photoInAlum of photosInAlum[0]) {
+      albumPhotosSet.add(photoInAlum.url);
+    }
 
     let insertNewPhotos =
       "INSERT INTO photo (user_id, url, album_id, public, trash, date, diary_id, size, photo_deleted, upload_date, photo_owner_user_id) VALUES ";
     for (const photoURL of photos) {
       for (const user of users[0]) {
         const eachUserId = user.user_id;
-        if (eachUserId === userId) {
+        if (eachUserId === userId || albumPhotosSet.has(photoURL)) {
           continue;
         }
         otherUser = true;
@@ -83,15 +90,18 @@ const addPhotoToExistAlbum = async (photos, albumName, userId) => {
     }
 
     // 2. update userId itself, add photo to album
-    let addPhotos = `UPDATE photo SET album_id = ${albumId[0][0].album_id} WHERE url IN`;
+    let updatePhotoOwnerAlbum = `UPDATE photo SET album_id = ${albumId[0][0].album_id} WHERE url IN`;
     let url = "(";
     for (const photoURL of photos) {
+      if (albumPhotosSet.has(photoURL)) {
+        continue;
+      }
       url += `"${photoURL}"` + ", ";
     }
     url = url.slice(0, -2);
-    url += ");";
-    addPhotos += url;
-    await conn.query(addPhotos);
+    url += `) AND user_id = ${userId};`;
+    updatePhotoOwnerAlbum += url;
+    await conn.query(updatePhotoOwnerAlbum);
     await conn.query("COMMIT");
     return "Add Photos To Album Complete";
   } catch (error) {
