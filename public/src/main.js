@@ -35,13 +35,17 @@ $(document).ready(function () {
         albums(false);
         // eslint-disable-next-line no-undef
         notReachEnd = false;
+      } else if (sideBarSection.innerHTML.split(">")[1].trim() === "Face Album") {
+        faces();
+        // eslint-disable-next-line no-undef
+        notReachEnd = false;
       } else if (sideBarSection.innerHTML.split(">")[1].trim() === "Trash") {
         trash();
         // eslint-disable-next-line no-undef
         notReachEnd = false;
       }
     }
-    if (bottom - position > 200) {
+    if (bottom - position > 50) {
       // eslint-disable-next-line no-undef
       notReachEnd = true;
     }
@@ -366,21 +370,39 @@ function faces () {
     contentType: "application/json",
     success: function (faces, status) {
       if (faces.length) {
-        try {
-          const faceZone = document.querySelector(".col-lg-10");
-          faceZone.insertAdjacentHTML("beforeend", "<br /><br /><br /><br />");
-          for (const face of faces) {
-            const img = `<img
-                          alt="${face.face_id}"
-                          src="${face.face_url}"
-                          class="d-inline-block align-text-top face"
-                       />`;
-            faceZone.insertAdjacentHTML("beforeend", img);
+        if (loadIndex !== 0) {
+          try {
+            const faceZone = document.querySelector(".col-lg-10");
+            for (const face of faces) {
+              const img = `<img
+                            alt="${face.face_id}"
+                            src="${face.face_url}"
+                            class="d-inline-block align-text-top face"
+                         />`;
+              faceZone.insertAdjacentHTML("beforeend", img);
+            }
+            // eslint-disable-next-line no-undef
+            loadIndex += photoNumberPerLoad;
+          } catch (error) {
+            console.error(`Show user faces error: ${error}`);
           }
-          // eslint-disable-next-line no-undef
-          loadIndex += photoNumberPerLoad;
-        } catch (error) {
-          console.error(`Show user faces error: ${error}`);
+        } else {
+          try {
+            const faceZone = document.querySelector(".col-lg-10");
+            faceZone.insertAdjacentHTML("beforeend", "<br /><br /><br /><br />");
+            for (const face of faces) {
+              const img = `<img
+                            alt="${face.face_id}"
+                            src="${face.face_url}"
+                            class="d-inline-block align-text-top face"
+                         />`;
+              faceZone.insertAdjacentHTML("beforeend", img);
+            }
+            // eslint-disable-next-line no-undef
+            loadIndex += photoNumberPerLoad;
+          } catch (error) {
+            console.error(`Show user faces error: ${error}`);
+          }
         }
       }
     },
