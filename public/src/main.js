@@ -1,4 +1,4 @@
-const photoNumberPerLoad = 20;
+const photoNumberPerLoad = 30;
 let notReachEnd = true;
 let loadIndex = 0;
 authentication();
