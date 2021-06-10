@@ -1321,6 +1321,9 @@ function uploadPhoto () {
           }
         },
         error: function (e) {
+          // eslint-disable-next-line no-undef
+          swal("Photo size is too large", "Please choose photo size under 2 MB!", "error");
+          photoUploadFormSet.clear();
           console.log("some error:", e);
           const header = document.querySelector("header");
           const input = `<input
