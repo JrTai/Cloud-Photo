@@ -1237,6 +1237,8 @@ uploadButton.addEventListener("click", (e) => {
 // eslint-disable-next-line no-unused-vars
 function uploadPhoto () {
   // event.preventDefault();
+  // eslint-disable-next-line no-undef
+  swal("Each photo size need to less than 2 MB");
   const localStorage = window.localStorage;
   // eslint-disable-next-line no-undef
   $("#imgupload").trigger("click");
