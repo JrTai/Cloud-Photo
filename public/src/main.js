@@ -1,6 +1,7 @@
 const photoNumberPerLoad = 30;
 let notReachEnd = true;
 let loadIndex = 0;
+const photoUploadFormSet = new Set();
 authentication();
 photos();
 
@@ -1234,7 +1235,7 @@ uploadButton.addEventListener("click", (e) => {
 // uploadButton.addEventListener("click", uploadPhoto(event), true);
 
 // eslint-disable-next-line no-unused-vars
-function uploadPhoto (event) {
+function uploadPhoto () {
   // event.preventDefault();
   const localStorage = window.localStorage;
   // eslint-disable-next-line no-undef
@@ -1244,30 +1245,41 @@ function uploadPhoto (event) {
     const form = new FormData();
     for (let i = 0; i < e.target.files.length; i += 1) {
       console.log(e.target.files[i]);
-      form.append("photos", e.target.files[i]);
+      if (photoUploadFormSet.has(e.target.files[i].name)) {
+        continue;
+      } else {
+        form.append("photos", e.target.files[i]);
+        photoUploadFormSet.add(e.target.files[i].name);
+      }
     }
-
+    // clear photo fils store in input element
     const input = document.querySelector("#imgupload");
     if (input) {
       input.parentNode.removeChild(input);
     }
-    // eslint-disable-next-line no-undef
-    swal("Uploading Photos to Your Cloud Stroage...");
-    // eslint-disable-next-line no-undef
-    $.ajax({
-      type: "POST",
-      url: "/api/1.0/upload/photo",
-      headers: {
-        Authorization: "Bearer " + localStorage.access_token
-      },
-      data: form,
-      processData: false,
-      contentType: false,
-      success: function (msg) {
-        // eslint-disable-next-line no-undef
-        swal(msg, "Please click the button!", "success");
-        const header = document.querySelector("header");
-        const input = `<input
+    // stop call ajax if form has no file
+    if (form.getAll("photos").length === 0) {
+      console.log("break");
+    } else {
+      // eslint-disable-next-line no-undef
+      swal("Uploading Photos to Your Cloud Stroage...");
+      // eslint-disable-next-line no-undef
+      $.ajax({
+        type: "POST",
+        url: "/api/1.0/upload/photo",
+        headers: {
+          Authorization: "Bearer " + localStorage.access_token
+        },
+        data: form,
+        processData: false,
+        contentType: false,
+        success: function (msg) {
+          // clear photo upload set for next upload
+          photoUploadFormSet.clear();
+          // eslint-disable-next-line no-undef
+          swal(msg, "Please click the button!", "success");
+          const header = document.querySelector("header");
+          const input = `<input
                         type="file"
                         id="imgupload"
                         style="display: none"
@@ -1275,19 +1287,19 @@ function uploadPhoto (event) {
                         multiple="multiple"
                         accept="image/*"
                        />`;
-        header.insertAdjacentHTML("beforeend", input);
-        const sideBarSection = document.querySelector(".active");
-        const section = sideBarSection.innerHTML.split(">")[1].trim();
-        if (section === "Photos") {
+          header.insertAdjacentHTML("beforeend", input);
+          const sideBarSection = document.querySelector(".active");
+          const section = sideBarSection.innerHTML.split(">")[1].trim();
+          if (section === "Photos") {
           // only refresh page if section is photos
-          cleanScreen();
-          photos();
-        }
-      },
-      error: function (e) {
-        console.log("some error:", e);
-        const header = document.querySelector("header");
-        const input = `<input
+            cleanScreen();
+            photos();
+          }
+        },
+        error: function (e) {
+          console.log("some error:", e);
+          const header = document.querySelector("header");
+          const input = `<input
                         type="file"
                         id="imgupload"
                         style="display: none"
@@ -1295,8 +1307,9 @@ function uploadPhoto (event) {
                         multiple="multiple"
                         accept="image/*"
                        />`;
-        header.insertAdjacentHTML("beforeend", input);
-      }
-    });
+          header.insertAdjacentHTML("beforeend", input);
+        }
+      });
+    }
   });
 }
