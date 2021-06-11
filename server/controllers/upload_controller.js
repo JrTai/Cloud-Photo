@@ -2,6 +2,7 @@ const moment = require("moment");
 
 const Photo = require("../models/photo_model");
 const Face = require("../models/face_model");
+const User = require("../models/user_model");
 
 const createUserPhoto = async (req, res) => {
   let uploadSize = 0;
@@ -23,9 +24,15 @@ const createUserPhoto = async (req, res) => {
       req.files[i].location.split("/")[req.files[i].location.split("/").length - 1]
     );
   }
+  const percentage = (uploadSize / 2000000000) * 100; // 2GB up limit per user
+  // check storage is under 100%
+  const userStorage = await User.getStorage(userid);
+  if ((userStorage + percentage) >= 100) {
+    res.status(200).send("Exceed 2GB storage limit!");
+    return;
+  }
   insertNewPhotos = insertNewPhotos.replace(/.$/, ";");
   await Photo.insertPhotos(insertNewPhotos);
-  const percentage = (uploadSize / 2000000000) * 100; // 2GB up limit per user
   const updateUserStorage = `UPDATE user SET storage = storage + ${percentage} WHERE user_id = ${userid};`;
   await Photo.insertPhotos(updateUserStorage);
   FaceClassification(photoFileNames, userid); // process in brackground

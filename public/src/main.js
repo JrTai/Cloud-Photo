@@ -35,7 +35,9 @@ $(document).ready(function () {
         albums(false);
         // eslint-disable-next-line no-undef
         notReachEnd = false;
-      } else if (sideBarSection.innerHTML.split(">")[1].trim() === "Face Album") {
+      } else if (
+        sideBarSection.innerHTML.split(">")[1].trim() === "Face Album"
+      ) {
         faces();
         // eslint-disable-next-line no-undef
         notReachEnd = false;
@@ -389,7 +391,10 @@ function faces () {
         } else {
           try {
             const faceZone = document.querySelector(".col-lg-10");
-            faceZone.insertAdjacentHTML("beforeend", "<br /><br /><br /><br />");
+            faceZone.insertAdjacentHTML(
+              "beforeend",
+              "<br /><br /><br /><br />"
+            );
             for (const face of faces) {
               const img = `<img
                             alt="${face.face_id}"
@@ -1250,10 +1255,14 @@ function updateUserInfo (data) {
 }
 
 const uploadButton = document.getElementById("upload");
-uploadButton.addEventListener("click", (e) => {
-  e.preventDefault();
-  uploadPhoto();
-}, true);
+uploadButton.addEventListener(
+  "click",
+  (e) => {
+    e.preventDefault();
+    uploadPhoto();
+  },
+  true
+);
 // uploadButton.addEventListener("click", uploadPhoto(event), true);
 
 // eslint-disable-next-line no-unused-vars
@@ -1298,12 +1307,22 @@ function uploadPhoto () {
         processData: false,
         contentType: false,
         success: function (msg) {
-          // clear photo upload set for next upload
-          photoUploadFormSet.clear();
-          // eslint-disable-next-line no-undef
-          swal(msg, "Please click the button!", "success");
-          const header = document.querySelector("header");
-          const input = `<input
+          if (msg === "Exceed 2GB storage limit!") {
+            // clear photo upload set for next upload
+            photoUploadFormSet.clear();
+            // eslint-disable-next-line no-undef
+            swal(
+              msg,
+              "Please upgrade to premium account!",
+              "error"
+            );
+          } else {
+            // clear photo upload set for next upload
+            photoUploadFormSet.clear();
+            // eslint-disable-next-line no-undef
+            swal(msg, "Please click the button!", "success");
+            const header = document.querySelector("header");
+            const input = `<input
                         type="file"
                         id="imgupload"
                         style="display: none"
@@ -1311,18 +1330,23 @@ function uploadPhoto () {
                         multiple="multiple"
                         accept="image/*"
                        />`;
-          header.insertAdjacentHTML("beforeend", input);
-          const sideBarSection = document.querySelector(".active");
-          const section = sideBarSection.innerHTML.split(">")[1].trim();
-          if (section === "Photos") {
-          // only refresh page if section is photos
-            cleanScreen();
-            photos();
+            header.insertAdjacentHTML("beforeend", input);
+            const sideBarSection = document.querySelector(".active");
+            const section = sideBarSection.innerHTML.split(">")[1].trim();
+            if (section === "Photos") {
+              // only refresh page if section is photos
+              cleanScreen();
+              photos();
+            }
           }
         },
         error: function (e) {
           // eslint-disable-next-line no-undef
-          swal("Photo size is too large", "Please choose photo size under 2 MB!", "error");
+          swal(
+            "Photo size is too large",
+            "Please choose photo size under 2 MB!",
+            "error"
+          );
           photoUploadFormSet.clear();
           console.log("some error:", e);
           const header = document.querySelector("header");
