@@ -100,15 +100,22 @@ const addPhotoToAlbum = async (req, res) => {
   const countAlbum = await Album.countAlbum(req.body.albumName);
   if (countAlbum[0][0]["COUNT(name)"]) {
     // album exist
-    await Photo.addPhotoToExistAlbum(
+    const msg = await Photo.addPhotoToExistAlbum(
       req.body.photos,
       req.body.albumName,
       req.user.user_id
     );
-    res.status(200).send({
-      msg: `Photo Added to Album "${req.body.albumName}"!`,
-      created: true
-    });
+    if (msg === "Add Photos To Album Complete") {
+      res.status(200).send({
+        msg: `Photo Added to Album "${req.body.albumName}"!`,
+        created: true
+      });
+    } else {
+      res.status(200).send({
+        msg: msg,
+        created: false
+      });
+    }
   } else {
     // album not exist
     res.status(200).send({

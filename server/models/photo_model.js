@@ -60,6 +60,12 @@ const addPhotoToExistAlbum = async (photos, albumName, userId) => {
     await conn.query("START TRANSACTION");
     const getAlbumId = `SELECT album_id FROM album WHERE name = '${albumName}'`;
     const albumId = await conn.query(getAlbumId);
+    // check user has the album to add photo
+    const hasAlbum = `SELECT * FROM photo WHERE user_id = ${userId} AND album_id = ${albumId[0][0].album_id}`;
+    const hasAlbumResult = await conn.query(hasAlbum);
+    if (hasAlbumResult[0].length === 0) {
+      return `Can't add photo to Album '${albumName}'`;
+    }
     // 1. get all user_id of album, add all photos to album for all user_id(insert many rows user_id photos)
     const usersOfAlum = `SELECT DISTINCT user_id FROM photo WHERE album_id = ${albumId[0][0].album_id}`;
     const users = await conn.query(usersOfAlum);
