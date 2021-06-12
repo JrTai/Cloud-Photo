@@ -171,7 +171,7 @@ document.addEventListener("click", function (event) {
       }
     });
   } else if (targetElement.classList.contains("face")) {
-    cleanScreen();
+    cleanScreen(false);
     getFacePhotos(parseInt(targetElement.alt));
   } else if (targetElement.classList.contains("owner")) {
     const section = sideBarSection.innerHTML.split(">")[1].trim();
@@ -1127,7 +1127,7 @@ function deselectAllPhoto () {
   }
 }
 
-function cleanScreen () {
+function cleanScreen (resetScroll = true) {
   const plusElement = document.querySelector("#plus");
   const minusElement = document.querySelector("#minus");
   const deleteElement = document.querySelector("#delete");
@@ -1140,6 +1140,9 @@ function cleanScreen () {
   deleteElement.setAttribute("style", "cursor: pointer; visibility: Hidden");
   recoveryElement.setAttribute("style", "cursor: pointer; visibility: Hidden");
   publicElement.setAttribute("style", "cursor: pointer; visibility: Hidden");
+  if (resetScroll) {
+    notReachEnd = true;
+  }
   // eslint-disable-next-line no-undef
   loadIndex = 0;
 }
