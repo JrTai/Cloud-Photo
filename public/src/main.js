@@ -1269,7 +1269,7 @@ uploadButton.addEventListener(
 function uploadPhoto () {
   // event.preventDefault();
   // eslint-disable-next-line no-undef
-  swal("Each photo size need to less than 2 MB");
+  swal("Each photo size requires less than 2MB");
   const localStorage = window.localStorage;
   // eslint-disable-next-line no-undef
   $("#imgupload").trigger("click");
