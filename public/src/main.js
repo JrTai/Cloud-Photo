@@ -1,4 +1,4 @@
-const photoNumberPerLoad = 30;
+const photoNumberPerLoad = 40;
 let notReachEnd = true;
 let loadIndex = 0;
 const photoUploadFormSet = new Set();

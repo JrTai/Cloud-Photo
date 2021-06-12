@@ -4,35 +4,35 @@ const Face = require("../models/face_model");
 
 const userPhotos = async (req, res) => {
   const index = req.body.loadIndex;
-  const getPhotosDetails = `SELECT * FROM photo WHERE user_id = ${req.user.user_id} AND trash != true AND photo_deleted != true AND photo_owner_user_id = ${req.user.user_id} ORDER BY UNIX_TIMESTAMP(date) DESC LIMIT ${index}, 30;`;
+  const getPhotosDetails = `SELECT * FROM photo WHERE user_id = ${req.user.user_id} AND trash != true AND photo_deleted != true AND photo_owner_user_id = ${req.user.user_id} ORDER BY UNIX_TIMESTAMP(date) DESC LIMIT ${index}, 40;`;
   const photos = await Photo.getPhotos(getPhotosDetails);
   res.status(200).send(photos);
 };
 
 const userFaces = async (req, res) => {
   const index = req.body.loadIndex;
-  const getFaceDetails = `SELECT * FROM face WHERE user_id = ${req.user.user_id} ORDER BY face_id LIMIT ${index}, 30;`;
+  const getFaceDetails = `SELECT * FROM face WHERE user_id = ${req.user.user_id} ORDER BY face_id LIMIT ${index}, 40;`;
   const faces = await Face.getFaces(getFaceDetails);
   res.status(200).send(faces);
 };
 
 const userFacePhotos = async (req, res) => {
   const index = req.body.loadIndex;
-  const getFacePhotosDetails = `SELECT * FROM photo WHERE user_id = ${req.user.user_id} AND include_face_id LIKE '%${req.body.faceId}%' AND trash != true AND photo_deleted != true AND photo_owner_user_id = ${req.user.user_id} ORDER BY UNIX_TIMESTAMP(date) DESC LIMIT ${index}, 30;`;
+  const getFacePhotosDetails = `SELECT * FROM photo WHERE user_id = ${req.user.user_id} AND include_face_id LIKE '%${req.body.faceId}%' AND trash != true AND photo_deleted != true AND photo_owner_user_id = ${req.user.user_id} ORDER BY UNIX_TIMESTAMP(date) DESC LIMIT ${index}, 40;`;
   const faces = await Face.getPhotosDetails(getFacePhotosDetails);
   res.status(200).send(faces);
 };
 
 const userExhibition = async (req, res) => {
   const index = req.body.loadIndex;
-  const getPhotosDetails = `SELECT * FROM photo WHERE trash != true AND photo_deleted != true AND public = true ORDER BY UNIX_TIMESTAMP(date) DESC LIMIT ${index}, 30;`;
+  const getPhotosDetails = `SELECT * FROM photo WHERE trash != true AND photo_deleted != true AND public = true ORDER BY UNIX_TIMESTAMP(date) DESC LIMIT ${index}, 40;`;
   const photos = await Photo.getPhotos(getPhotosDetails);
   res.status(200).send(photos);
 };
 
 const userTrash = async (req, res) => {
   const index = req.body.loadIndex;
-  const getPhotosDetails = `SELECT * FROM photo WHERE user_id = ${req.user.user_id} AND trash = true AND photo_deleted != true ORDER BY UNIX_TIMESTAMP(date) DESC LIMIT ${index}, 30;`;
+  const getPhotosDetails = `SELECT * FROM photo WHERE user_id = ${req.user.user_id} AND trash = true AND photo_deleted != true ORDER BY UNIX_TIMESTAMP(date) DESC LIMIT ${index}, 40;`;
   const photos = await Photo.getPhotos(getPhotosDetails);
   res.status(200).send(photos);
 };
@@ -42,9 +42,9 @@ const userAlbums = async (req, res) => {
   const shared = req.body.shared;
   let getUserAlbumsDetails;
   if (shared) {
-    getUserAlbumsDetails = `SELECT * FROM photo JOIN album ON photo.album_id = album.album_id WHERE photo.user_id IN (${req.user.user_id}) AND album.shared = ${shared} AND album.album_deleted != true ORDER BY album.album_id DESC LIMIT ${index}, 30;`;
+    getUserAlbumsDetails = `SELECT * FROM photo JOIN album ON photo.album_id = album.album_id WHERE photo.user_id IN (${req.user.user_id}) AND album.shared = ${shared} AND album.album_deleted != true ORDER BY album.album_id DESC LIMIT ${index}, 40;`;
   } else {
-    getUserAlbumsDetails = `SELECT * FROM photo JOIN album ON photo.album_id = album.album_id WHERE photo.user_id IN (${req.user.user_id}) AND album.shared = ${shared} AND album.album_owner_user_id = ${req.user.user_id} AND album.album_deleted != true ORDER BY album.album_id DESC LIMIT ${index}, 30;`;
+    getUserAlbumsDetails = `SELECT * FROM photo JOIN album ON photo.album_id = album.album_id WHERE photo.user_id IN (${req.user.user_id}) AND album.shared = ${shared} AND album.album_owner_user_id = ${req.user.user_id} AND album.album_deleted != true ORDER BY album.album_id DESC LIMIT ${index}, 40;`;
   }
   const photos = await Album.getAlbumPhotos(getUserAlbumsDetails);
   res.status(200).send(photos[0]);
