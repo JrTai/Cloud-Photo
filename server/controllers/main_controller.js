@@ -42,9 +42,9 @@ const userAlbums = async (req, res) => {
   const shared = req.body.shared;
   let getUserAlbumsDetails;
   if (shared) {
-    getUserAlbumsDetails = `SELECT * FROM photo JOIN album ON photo.album_id = album.album_id WHERE photo.user_id IN (${req.user.user_id}) AND album.shared = ${shared} AND album.album_deleted != true ORDER BY album.album_id DESC LIMIT ${index}, 40;`;
+    getUserAlbumsDetails = `SELECT * FROM photo JOIN album ON photo.album_id = album.album_id WHERE photo.user_id IN (${req.user.user_id}) AND album.shared = ${shared} AND album.album_deleted != true ORDER BY album.album_id DESC, photo.photo_id DESC LIMIT ${index}, 40;`;
   } else {
-    getUserAlbumsDetails = `SELECT * FROM photo JOIN album ON photo.album_id = album.album_id WHERE photo.user_id IN (${req.user.user_id}) AND album.shared = ${shared} AND album.album_owner_user_id = ${req.user.user_id} AND album.album_deleted != true ORDER BY album.album_id DESC LIMIT ${index}, 40;`;
+    getUserAlbumsDetails = `SELECT * FROM photo JOIN album ON photo.album_id = album.album_id WHERE photo.user_id IN (${req.user.user_id}) AND album.shared = ${shared} AND album.album_owner_user_id = ${req.user.user_id} AND album.album_deleted != true ORDER BY album.album_id DESC, photo.photo_id DESC LIMIT ${index}, 40;`;
   }
   const photos = await Album.getAlbumPhotos(getUserAlbumsDetails);
   res.status(200).send(photos[0]);

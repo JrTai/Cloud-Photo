@@ -836,6 +836,7 @@ function albums (shared) {
           } else {
             const albumNameZones = document.querySelectorAll(".album-name");
             albumName = albumNameZones[albumNameZones.length - 1].innerHTML;
+            albumName = albumName.split("<")[0].trim();
           }
           for (const album of albums) {
             const eachAlbumName = album.name;
@@ -846,7 +847,7 @@ function albums (shared) {
               if (album.user_id === album.album_owner_user_id) {
                 name = `<br />
                         <br />
-                        <p class="photo-date">${albumName}
+                        <p class="album-name">${albumName}
                           <img
                             src="./images/owner.png"
                             alt="owner"
@@ -860,7 +861,7 @@ function albums (shared) {
               } else {
                 name = `<br />
                         <br />
-                        <p class="photo-date">${albumName}
+                        <p class="album-name">${albumName}
                         </p>
                         <br />`;
               }
