@@ -23,6 +23,7 @@
         <div class="container-fluid">
           <a class="navbar-brand" href="#">
             <img
+              id="cloud-logo"
               src="./images/logo.png"
               alt="logo"
               width="24"
@@ -156,7 +157,7 @@
                   Photos
                 </a>
               </li>
-              <li>
+              <li class="nav-item">
                 <a href="#" class="nav-link link-dark">
                   <img
                     src="./images/people.png"
@@ -168,7 +169,7 @@
                   Shared Album
                 </a>
               </li>
-              <li>
+              <li class="nav-item">
                 <a href="#" class="nav-link link-dark">
                   <img
                     src="./images/album.png"
@@ -180,7 +181,7 @@
                   My Album
                 </a>
               </li>
-              <li>
+              <li class="nav-item">
                 <a href="#" class="nav-link link-dark">
                   <img
                     src="./images/face.png"
@@ -192,7 +193,7 @@
                   Face Album
                 </a>
               </li>
-              <li>
+              <li class="nav-item">
                 <a href="#" class="nav-link link-dark">
                   <img
                     src="./images/exhibition.png"
@@ -204,7 +205,7 @@
                   Exhibition
                 </a>
               </li>
-              <li>
+              <li class="nav-item">
                 <a href="#" class="nav-link link-dark">
                   <img
                     src="./images/trash.png"
@@ -219,8 +220,8 @@
               <li>
                 <hr />
               </li>
-              <li>
-                <a href="#" class="nav-link link-dark storage">
+              <li class="nav-item">
+                <div class="nav-link link-dark storage">
                   <img
                     src="./images/cloud.png"
                     alt="cloud"
@@ -229,10 +230,10 @@
                     class="bi me-2"
                   />
                   Storage
-                </a>
+                </div>
               </li>
-              <li>
-                <a href="#" class="nav-link link-dark storage">
+              <li class="nav-item">
+                <div class="nav-link link-dark storage">
                   <img
                     style="visibility: Hidden"
                     src="./images/cloud.png"
@@ -242,10 +243,10 @@
                     class="bi me-2"
                   />
                   <progress id="file" max="100" value="0">0%</progress>
-                </a>
+                </div>
               </li>
-              <li>
-                <a href="#" class="nav-link link-dark storage" id="storage">
+              <li class="nav-item">
+                <div class="nav-link link-dark storage" id="storage">
                   <img
                     style="visibility: Hidden"
                     src="./images/cloud.png"
@@ -255,7 +256,7 @@
                     class="bi me-2"
                   />
                   Used 0% of 2GB
-                </a>
+                </div>
               </li>
             </ul>
             <hr />
