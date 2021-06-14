@@ -1,6 +1,7 @@
 const photoNumberPerLoad = 40;
 let notReachEnd = true;
 let loadIndex = 0;
+let ableToLoad = true;
 const photoUploadFormSet = new Set();
 authentication();
 photos();
@@ -18,7 +19,7 @@ $(document).ready(function () {
     // big problem: position wouldn't really reach the bottom, will has tiny difference, from 13 to 4
     // since there's a ragne, will trigger multiple times functions
     // eslint-disable-next-line no-undef
-    if (bottom - position < 20 && notReachEnd) {
+    if (bottom - position < 20 && notReachEnd && ableToLoad) {
       // console.log("reach bottom");
       const sideBarSection = document.querySelector(".active");
       if (sideBarSection.innerHTML.split(">")[1].trim() === "Photos") {
@@ -171,7 +172,7 @@ document.addEventListener("click", function (event) {
       }
     });
   } else if (targetElement.classList.contains("face")) {
-    cleanScreen(false);
+    cleanScreen(true);
     getFacePhotos(parseInt(targetElement.alt));
   } else if (targetElement.classList.contains("owner")) {
     const section = sideBarSection.innerHTML.split(">")[1].trim();
@@ -1128,7 +1129,7 @@ function deselectAllPhoto () {
   }
 }
 
-function cleanScreen (resetScroll = true) {
+function cleanScreen (resetScroll = false) {
   const plusElement = document.querySelector("#plus");
   const minusElement = document.querySelector("#minus");
   const deleteElement = document.querySelector("#delete");
@@ -1142,7 +1143,9 @@ function cleanScreen (resetScroll = true) {
   recoveryElement.setAttribute("style", "cursor: pointer; visibility: Hidden");
   publicElement.setAttribute("style", "cursor: pointer; visibility: Hidden");
   if (resetScroll) {
-    notReachEnd = true;
+    ableToLoad = false;
+  } else {
+    ableToLoad = true;
   }
   // eslint-disable-next-line no-undef
   loadIndex = 0;
