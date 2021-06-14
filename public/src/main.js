@@ -2,6 +2,11 @@ const photoNumberPerLoad = 40;
 let notReachEnd = true;
 let loadIndex = 0;
 let ableToLoad = true;
+let showEmptyPhoto = true;
+let showEmptySharedAlbum = true;
+let showEmptyMyAlbum = true;
+let showEmptyFaceAlbum = true;
+let showEmptyTrash = true;
 const photoUploadFormSet = new Set();
 authentication();
 photos();
@@ -372,7 +377,21 @@ function faces () {
     processData: false,
     contentType: "application/json",
     success: function (faces, status) {
+      if (faces.length === 0 && showEmptyFaceAlbum) {
+        cleanScreen();
+        const faceZone = document.querySelector(".col-lg-10");
+        const img = `<div class="d-inline-block align-text-top img-container">
+                      <br><br><br><br><br><br><br><br><br><br><br><br>
+                      <img
+                        src="./images/faceAlbum.png"
+                        class="d-inline-block align-text-top epmty"
+                        style="margin-left: 450px"
+                      />
+                     </div>`;
+        faceZone.insertAdjacentHTML("beforeend", img);
+      }
       if (faces.length) {
+        showEmptyFaceAlbum = false;
         if (loadIndex !== 0) {
           try {
             const faceZone = document.querySelector(".col-lg-10");
@@ -732,7 +751,21 @@ function trash () {
     processData: false,
     contentType: "application/json",
     success: function (photos, status) {
+      if (photos.length === 0 && showEmptyTrash) {
+        cleanScreen();
+        const photoZone = document.querySelector(".col-lg-10");
+        const img = `<div class="d-inline-block align-text-top img-container">
+                      <br><br><br><br><br><br><br><br><br><br><br><br>
+                      <img
+                        src="./images/warehouse.png"
+                        class="d-inline-block align-text-top epmty"
+                        style="margin-left: 450px"
+                      />
+                     </div>`;
+        photoZone.insertAdjacentHTML("beforeend", img);
+      }
       if (photos.length) {
+        showEmptyTrash = false;
         try {
           const photoZone = document.querySelector(".col-lg-10");
           let photoDate;
@@ -804,7 +837,39 @@ function albums (shared) {
     processData: false,
     contentType: "application/json",
     success: function (albums, status) {
+      if (albums.length === 0) {
+        if (shared && showEmptySharedAlbum) {
+          cleanScreen();
+          const albumZone = document.querySelector(".col-lg-10");
+          const img = `<div class="d-inline-block align-text-top img-container">
+                      <br><br><br><br><br><br><br><br><br><br><br><br>
+                      <img
+                        src="./images/sharedAlbum.png"
+                        class="d-inline-block align-text-top epmty"
+                        style="margin-left: 450px"
+                      />
+                     </div>`;
+          albumZone.insertAdjacentHTML("beforeend", img);
+        } else if (!shared && showEmptyMyAlbum) {
+          cleanScreen();
+          const albumZone = document.querySelector(".col-lg-10");
+          const img = `<div class="d-inline-block align-text-top img-container">
+                      <br><br><br><br><br><br><br><br><br><br><br><br>
+                      <img
+                        src="./images/myAlbum.png"
+                        class="d-inline-block align-text-top epmty"
+                        style="margin-left: 450px"
+                      />
+                     </div>`;
+          albumZone.insertAdjacentHTML("beforeend", img);
+        }
+      }
       if (albums.length) {
+        if (shared) {
+          showEmptySharedAlbum = false;
+        } else {
+          showEmptyMyAlbum = false;
+        }
         try {
           const albumZone = document.querySelector(".col-lg-10");
           let albumName;
@@ -1166,7 +1231,23 @@ function photos () {
     processData: false,
     contentType: "application/json",
     success: function (photos, status) {
+      if (photos.length === 0 && showEmptyPhoto) {
+        cleanScreen();
+        const photoZone = document.querySelector(".col-lg-10");
+        const img = `<div class="d-inline-block align-text-top img-container">
+                      <br><br><br><br><br><br><br><br><br><br><br><br>
+                      <img
+                        src="./images/emptyPhoto.png"
+                        class="d-inline-block align-text-top epmty"
+                        style="margin-left: 450px"
+                      />
+                     </div>`;
+        photoZone.insertAdjacentHTML("beforeend", img);
+        // eslint-disable-next-line no-undef
+        swal("Upload photos to start", "Please click the button!", "info");
+      }
       if (photos.length) {
+        showEmptyPhoto = false;
         try {
           const photoZone = document.querySelector(".col-lg-10");
           let photoDate;
