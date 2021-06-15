@@ -380,12 +380,10 @@ function faces () {
       if (faces.length === 0 && showEmptyFaceAlbum) {
         cleanScreen();
         const faceZone = document.querySelector(".col-lg-10");
-        const img = `<div class="d-inline-block align-text-top img-container">
-                      <br><br><br><br><br><br><br><br><br><br><br><br>
+        const img = `<div class="empty-container">
                       <img
                         src="./images/faceAlbum.png"
-                        class="d-inline-block align-text-top epmty"
-                        style="margin-left: 450px"
+                        class="empty"
                       />
                      </div>`;
         faceZone.insertAdjacentHTML("beforeend", img);
@@ -754,12 +752,10 @@ function trash () {
       if (photos.length === 0 && showEmptyTrash) {
         cleanScreen();
         const photoZone = document.querySelector(".col-lg-10");
-        const img = `<div class="d-inline-block align-text-top img-container">
-                      <br><br><br><br><br><br><br><br><br><br><br><br>
+        const img = `<div class="empty-container">
                       <img
                         src="./images/warehouse.png"
-                        class="d-inline-block align-text-top epmty"
-                        style="margin-left: 450px"
+                        class="empty"
                       />
                      </div>`;
         photoZone.insertAdjacentHTML("beforeend", img);
@@ -841,24 +837,20 @@ function albums (shared) {
         if (shared && showEmptySharedAlbum) {
           cleanScreen();
           const albumZone = document.querySelector(".col-lg-10");
-          const img = `<div class="d-inline-block align-text-top img-container">
-                      <br><br><br><br><br><br><br><br><br><br><br><br>
+          const img = `<div class="empty-container">
                       <img
                         src="./images/sharedAlbum.png"
-                        class="d-inline-block align-text-top epmty"
-                        style="margin-left: 450px"
+                        class="empty"
                       />
                      </div>`;
           albumZone.insertAdjacentHTML("beforeend", img);
         } else if (!shared && showEmptyMyAlbum) {
           cleanScreen();
           const albumZone = document.querySelector(".col-lg-10");
-          const img = `<div class="d-inline-block align-text-top img-container">
-                      <br><br><br><br><br><br><br><br><br><br><br><br>
+          const img = `<div class="empty-container">
                       <img
                         src="./images/myAlbum.png"
-                        class="d-inline-block align-text-top epmty"
-                        style="margin-left: 450px"
+                        class="empty"
                       />
                      </div>`;
           albumZone.insertAdjacentHTML("beforeend", img);
@@ -1234,12 +1226,10 @@ function photos () {
       if (photos.length === 0 && showEmptyPhoto) {
         cleanScreen();
         const photoZone = document.querySelector(".col-lg-10");
-        const img = `<div class="d-inline-block align-text-top img-container">
-                      <br><br><br><br><br><br><br><br><br><br><br><br>
+        const img = `<div class="empty-container">
                       <img
                         src="./images/emptyPhoto.png"
-                        class="d-inline-block align-text-top epmty"
-                        style="margin-left: 450px"
+                        class="empty"
                       />
                      </div>`;
         photoZone.insertAdjacentHTML("beforeend", img);
