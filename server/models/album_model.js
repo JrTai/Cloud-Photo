@@ -98,15 +98,6 @@ const setAlbumAuthority = async (albumName, shared) => {
     await conn.query("START TRANSACTION");
     const updateAlbum = `UPDATE album SET shared = ${shared} WHERE name = '${albumName}'`;
     await conn.query(updateAlbum);
-    // if (!shared) {
-    //   const getAlbum = `SELECT album_id FROM album WHERE name = '${albumName}'`;
-    //   const albumDetail = await conn.query(getAlbum);
-    //   const albumId = albumDetail[0][0].album_id;
-    //   // delete album photos in shared user
-    //   const deletePhotos = `DELETE FROM photo WHERE album_id = ${albumId} AND user_id != ${userId} AND photo_owner_user_id = ${userId};`;
-    //   console.log(deletePhotos);
-    //   await conn.query(deletePhotos);
-    // }
     await conn.query("COMMIT");
     return "Set Album Complete";
   } catch (error) {

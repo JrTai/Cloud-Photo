@@ -55,22 +55,9 @@ async function detectFaceExtract (photoFileName) {
           imageFileName +
           "."
       );
-      //   console.log("Face attributes for face(s) in " + imageFileName + ":");
 
       // Parse and print all attributes of each detected face.
       detectedFaces.forEach(async function (face) {
-        // Get the bounding box of the face
-        // console.log(
-        //   "Bounding box:\n  Left: " +
-        //     face.faceRectangle.left +
-        //     "\n  Top: " +
-        //     face.faceRectangle.top +
-        //     "\n  Width: " +
-        //     face.faceRectangle.width +
-        //     "\n  Height: " +
-        //     face.faceRectangle.height
-        // );
-
         detectReulst.hasFace = true;
         const faceBoundingBox = {
           left: face.faceRectangle.left,
@@ -79,118 +66,6 @@ async function detectFaceExtract (photoFileName) {
           height: face.faceRectangle.height
         };
         detectReulst.faces.push(faceBoundingBox);
-
-        // Get the accessories of the face
-        // const accessories = face.faceAttributes.accessories.join();
-        // if (accessories.length === 0) {
-        //   console.log("No accessories detected.");
-        // } else {
-        //   console.log("Accessories: " + accessories);
-        // }
-
-        // // Get face other attributes
-        // console.log("Age: " + face.faceAttributes.age);
-        // console.log("Blur: " + face.faceAttributes.blur.blurLevel);
-
-        // // Get emotion on the face
-        // let emotions = "";
-        // const emotionThreshold = 0.0;
-        // if (face.faceAttributes.emotion.anger > emotionThreshold) {
-        //   emotions += "anger, ";
-        // }
-        // if (face.faceAttributes.emotion.contempt > emotionThreshold) {
-        //   emotions += "contempt, ";
-        // }
-        // if (face.faceAttributes.emotion.disgust > emotionThreshold) {
-        //   emotions += "disgust, ";
-        // }
-        // if (face.faceAttributes.emotion.fear > emotionThreshold) {
-        //   emotions += "fear, ";
-        // }
-        // if (face.faceAttributes.emotion.happiness > emotionThreshold) {
-        //   emotions += "happiness, ";
-        // }
-        // if (face.faceAttributes.emotion.neutral > emotionThreshold) {
-        //   emotions += "neutral, ";
-        // }
-        // if (face.faceAttributes.emotion.sadness > emotionThreshold) {
-        //   emotions += "sadness, ";
-        // }
-        // if (face.faceAttributes.emotion.surprise > emotionThreshold) {
-        //   emotions += "surprise, ";
-        // }
-        // if (emotions.length > 0) {
-        //   console.log("Emotions: " + emotions.slice(0, -2));
-        // } else {
-        //   console.log("No emotions detected.");
-        // }
-
-        // // Get more face attributes
-        // console.log("Exposure: " + face.faceAttributes.exposure.exposureLevel);
-        // if (
-        //   face.faceAttributes.facialHair.moustache +
-        //     face.faceAttributes.facialHair.beard +
-        //     face.faceAttributes.facialHair.sideburns >
-        //   0
-        // ) {
-        //   console.log("FacialHair: Yes");
-        // } else {
-        //   console.log("FacialHair: No");
-        // }
-        // console.log("Gender: " + face.faceAttributes.gender);
-        // console.log("Glasses: " + face.faceAttributes.glasses);
-
-        // // Get hair color
-        // let color = "";
-        // if (face.faceAttributes.hair.hairColor.length === 0) {
-        //   if (face.faceAttributes.hair.invisible) {
-        //     color = "Invisible";
-        //   } else {
-        //     color = "Bald";
-        //   }
-        // } else {
-        //   color = "Unknown";
-        //   let highestConfidence = 0.0;
-        //   face.faceAttributes.hair.hairColor.forEach(function (hairColor) {
-        //     if (hairColor.confidence > highestConfidence) {
-        //       highestConfidence = hairColor.confidence;
-        //       color = hairColor.color;
-        //     }
-        //   });
-        // }
-        // console.log("Hair: " + color);
-
-        // // Get more attributes
-        // console.log("Head pose:");
-        // console.log("  Pitch: " + face.faceAttributes.headPose.pitch);
-        // console.log("  Roll: " + face.faceAttributes.headPose.roll);
-        // console.log("  Yaw: " + face.faceAttributes.headPose.yaw);
-
-        // console.log(
-        //   "Makeup: " +
-        //     (face.faceAttributes.makeup.eyeMakeup ||
-        //     face.faceAttributes.makeup.lipMakeup
-        //       ? "Yes"
-        //       : "No")
-        // );
-        // console.log("Noise: " + face.faceAttributes.noise.noiseLevel);
-
-        // console.log("Occlusion:");
-        // console.log(
-        //   "  Eye occluded: " +
-        //     (face.faceAttributes.occlusion.eyeOccluded ? "Yes" : "No")
-        // );
-        // console.log(
-        //   "  Forehead occluded: " +
-        //     (face.faceAttributes.occlusion.foreheadOccluded ? "Yes" : "No")
-        // );
-        // console.log(
-        //   "  Mouth occluded: " +
-        //     (face.faceAttributes.occlusion.mouthOccluded ? "Yes" : "No")
-        // );
-
-        // console.log("Smile: " + face.faceAttributes.smile);
-        // console.log();
       });
     })
   );
@@ -279,8 +154,6 @@ async function saveCroppedFaceToS3 (
   };
   s3.getObject(params, function (err, data) {
     if (err) console.log(err, err.stack);
-    // an error occurred
-    // else console.log(data); // successful response
 
     // use sharp to crop face then save to s3
     const sharp = require("sharp");

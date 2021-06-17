@@ -70,7 +70,7 @@ const nativeSignIn = async (email, password) => {
     );
 
     // problem, will block process, currently skip update step
-    // const updateUserToken = `UPDATE user SET access_token = "${accessToken}", access_expired = ${TOKEN_EXPIRE} WHERE userid = ${user.userid};`;
+    // const updateUserToken = `UPDATE user SET access_token = "${accessToken}", access_expired = ${TOKEN_EXPIRE} WHERE user_id = ${user.user_id};`;
     // await conn.query(updateUserToken);
 
     await conn.query("COMMIT");
