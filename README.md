@@ -9,7 +9,7 @@ A face recognition photo album platform which user can create album and share to
 
 **Password:** 13
 
-(Example account include sample photos, please sign up to test full features!)
+(Example account include sample photos. Please sign up to test full features!)
 
 ## Table of Content
 * [Features](#Features)
